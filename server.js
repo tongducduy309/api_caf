@@ -1,5 +1,5 @@
 const express = require('express')
-const pg = require('pg')
+// const pg = require('pg')
 const app = express()
 const port = 3000
 
@@ -8,13 +8,13 @@ const router = express.Router()
 require("dotenv").config();
 
 
-const pool = new pg.Pool({
-    host:process.env.DB_HOST,
-    port:process.env.DB_PORT,
-    user:process.env.DB_USER,
-    password:process.env.DB_PASSWORD,
-    database:process.env.DB_DATABASE,
-});
+// const pool = new pg.Pool({
+//     host:process.env.DB_HOST,
+//     port:process.env.DB_PORT,
+//     user:process.env.DB_USER,
+//     password:process.env.DB_PASSWORD,
+//     database:process.env.DB_DATABASE,
+// });
 
 // const db =pool.connect();
 
