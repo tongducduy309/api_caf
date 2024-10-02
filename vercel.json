@@ -1,9 +1,11 @@
-{
-    "version": 2,
-    "builds": [
-      {
-        "src": "server.js",
-        "use": "@vercel/node"
-      }
-    ]
+{ 
+    "version": 2, 
+    "rewrites": [{ 
+        "source": "/(.*)", 
+        "destination": "/api" 
+    }] ,
+    "build": {
+    "command": "npm run build",
+    "output": "dist"
   }
+}
