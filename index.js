@@ -1,5 +1,5 @@
 const express = require('express')
-// const pg = require('pg')
+const pg = require('pg')
 const app = express()
 const port = 3000
 
@@ -16,19 +16,23 @@ require("dotenv").config();
 //     database:process.env.DB_DATABASE,
 // });
 
-// const db =pool.connect();
+const pool = new pg.Pool({
+    connectionString: process.env.POSTGRES_URL,
+  })
+
+const db =pool.connect();
 
 
-// router.get('/users', (req, res) => {
-//     pool.query('SELECT * FROM accounts', (error, results) => {
-//         if (error) {
-//             console.error(error);
-//             res.status(500).send('Error retrieving users');
-//         } else {
-//             res.json(results.rows);
-//         }
-//     });
-// })
+router.get('/users', (req, res) => {
+    pool.query('SELECT * FROM accounts', (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).send('Error retrieving users');
+        } else {
+            res.json(results.rows);
+        }
+    });
+})
 
 router.get('/products', (req, res) => {
     const products = [
