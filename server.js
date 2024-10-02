@@ -37,9 +37,9 @@ router.get('/products', (req, res) => {
     ];
     res.json(products);
 });
-// app.get('/', (req, res) => {
-//   res.send('Hello World!')
-// })
+app.get('/', (req, res) => {
+  res.send('Hello World!')
+})
 
 app.use("/api/",router)
 
