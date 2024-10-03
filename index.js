@@ -22,9 +22,25 @@ const pool = new pg.Pool({
 
 const db =pool.connect();
 
+// ==========================USER================================
+router.post('/login', (req, res) => {
+    return res.status(200)
+    const { username, password } = req.body;
+    if (!username || !password) {
+        return res.status(400).json({ error: 'Missing required fields' });
+    }
+    db.query(`SELECT 1 FROM accounts WHERE USERNAME=${username} AND PASSWORD=${password}`, (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).send('Error retrieving users');
+        } else {
+            res.status(200).json(results.rows);
+        }
+    });
+})
 
 router.get('/users', (req, res) => {
-    pool.query('SELECT * FROM accounts', (error, results) => {
+    db.query('SELECT * FROM accounts', (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).send('Error retrieving users');
@@ -34,13 +50,8 @@ router.get('/users', (req, res) => {
     });
 })
 
-router.get('/products', (req, res) => {
-    const products = [
-        { id: 1, name: 'Sản phẩm 1' },
-        { id: 2, name: 'Sản phẩm 2' }
-    ];
-    res.json(products);
-});
+
+
 app.get('/', (req, res) => {
   res.send('Hello World!')
 })
