@@ -40,7 +40,7 @@ router.post('/login', (req, res) => {
 })
 
 router.get('/users', (req, res) => {
-    db.query('SELECT * FROM accounts', (error, results) => {
+    pool.query('SELECT * FROM accounts', (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).send('Error retrieving users');
