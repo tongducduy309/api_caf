@@ -4,7 +4,7 @@ const app = express()
 const port = 3000
 
 const router = express.Router()
-
+app.use(express.json())
 require("dotenv").config();
 
 
@@ -20,26 +20,49 @@ const pool = new pg.Pool({
     connectionString: process.env.POSTGRES_URL,
   })
 
-const db =pool.connect();
+// const db =pool.connect();
 
 // ==========================USER================================
 router.post('/login', (req, res) => {
-    return res.status(200)
-    const { username, password } = req.body;
+    const user = req.body;
+    const username=user.username
+    const password=user.password
     if (!username || !password) {
         return res.status(400).json({ error: 'Missing required fields' });
     }
-    db.query(`SELECT 1 FROM accounts WHERE USERNAME=${username} AND PASSWORD=${password}`, (error, results) => {
+    pool.query(`SELECT * FROM accounts WHERE USERNAME='${username}' AND PASSWORD='${password}'`, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).send('Error retrieving users');
         } else {
-            res.status(200).json(results.rows);
+            res.status(200).json(results.rows[0]);
         }
     });
 })
 
-router.get('/users', (req, res) => {
+//Chưa hoàn thành
+router.post('/register', (req, res) => {
+    const user = req.body;
+    const username=user.username
+    const password=user.password
+    const firstName=user.firstName
+    const lastName=user.lastName
+    const email = user.email
+    if (!username || !password) {
+        return res.status(400).json({ error: 'Missing required fields' });
+    }
+    pool.query(`INSERT INTO accounts (username, email, password, firstname,lastname) VALUES
+    ('${username}', '${email}', '${password}', '${firstName}', '${lastName}')`, (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).send('Error: Insert Into');
+        } else {
+            res.status(200);
+        }
+    });
+})
+
+router.get('get/users', (req, res) => {
     pool.query('SELECT * FROM accounts', (error, results) => {
         if (error) {
             console.error(error);
@@ -50,6 +73,29 @@ router.get('/users', (req, res) => {
     });
 })
 
+// ==========================PRODUCT================================
+router.get('/get/products/all', (req, res) => {
+    pool.query(`SELECT products.* FROM PRODUCTS LEFT JOIN CATEGORIES ON PRODUCTS.cid=CATEGORIES.id`, (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).send('Error retrieving PRODUCTS');
+        } else {
+            res.status(200).json(results.rows);
+        }
+    });
+})
+
+router.get('/get/products/:id', (req, res) => {
+    const id = req.params.id;
+    pool.query(`SELECT products.* FROM PRODUCTS LEFT JOIN CATEGORIES ON PRODUCTS.cid=CATEGORIES.id WHERE PRODUCTS.id = '${id}'`, (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).send('NOT EXIST PRODUCT');
+        } else {
+            res.status(200).json(results.rows[0]);
+        }
+    });
+})
 
 
 app.get('/', (req, res) => {
@@ -57,6 +103,7 @@ app.get('/', (req, res) => {
 })
 
 app.use("/api/",router)
+
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
