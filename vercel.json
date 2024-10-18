@@ -8,5 +8,17 @@
         "headers": {
         "Access-Control-Allow-Origin": "*"
       }
-    }]
+    }],
+    
+  "headers": [
+    {
+      "source": "/api/your-api-route",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "http://localhost:4200" 
+        }
+      ]
+    }
+  ]
 }
