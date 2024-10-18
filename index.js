@@ -112,7 +112,7 @@ router.post('/post/customer-reviews', (req, res) => {
             console.error(error);
             res.status(500).send('Error: Insert Into');
         } else {
-            res.status(200);
+            res.status(200).send('Success');
         }
     });
 })
