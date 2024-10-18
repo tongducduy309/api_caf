@@ -97,6 +97,24 @@ router.get('/get/products/:id', (req, res) => {
     });
 })
 
+// ==========================CUSTOMER-REVIEWS================================
+router.post('/post/customer-reviews', (req, res) => {
+    const form = req.body;
+    const pid=form.pid
+    const point=form.point
+    const name=form.name
+    const email=form.email
+    const comment=form.comment
+    pool.query(`INSERT INTO CUSTOMER_REVIEWS (pid,point,name, email,comment) VALUES
+    ('${pid}', '${point}', '${name}', '${email}', '${comment}')`, (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).send('Error: Insert Into');
+        } else {
+            res.status(200);
+        }
+    });
+})
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
