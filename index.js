@@ -125,7 +125,8 @@ app.get('/', (req, res) => {
 
 app.use(cors({
     origin: ['http://localhost:4200' ,'https://caf-bay.vercel.app']
-   // Replace with your frontend domain
+   ,methods: 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+  allowedHeaders: 'Authorization, Content-Type'
   }));
 
 app.use("/api/",router)
