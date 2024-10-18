@@ -1,5 +1,6 @@
 const express = require('express')
 const pg = require('pg')
+const cors = require('cors');
 const app = express()
 const port = 3000
 
@@ -119,6 +120,13 @@ router.post('/post/customer-reviews', (req, res) => {
 app.get('/', (req, res) => {
   res.send('Hello World!')
 })
+
+
+
+app.use(cors({
+    origin: 'http://localhost:4200'   
+   // Replace with your frontend domain
+  }));
 
 app.use("/api/",router)
 
