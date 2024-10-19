@@ -122,7 +122,7 @@ router.get('/get/customer-reviews/:id', (req, res) => {
     pool.query(`SELECT * FROM CUSTOMER-REVIEWS WHERE id = '${id}'`, (error, results) => {
         if (error) {
             console.error(error);
-            res.status(500).send('NOT EXIST PRODUCT');
+            res.status(500).send('NOT EXIST CUSTOMER-REVIEWS FOR THIS PRODUCT');
         } else {
             res.status(200).json(results.rows);
         }
