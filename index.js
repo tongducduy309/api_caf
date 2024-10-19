@@ -88,14 +88,16 @@ router.get('/get/products/all', (req, res) => {
 
 router.get('/get/products/:id', (req, res) => {
     const id = req.params.id;
-    pool.query(`SELECT products.* FROM PRODUCTS LEFT JOIN CATEGORIES ON PRODUCTS.cid=CATEGORIES.id WHERE PRODUCTS.id = '${id}'`, (error, results) => {
-        if (error) {
-            console.error(error);
-            res.status(500).send('NOT EXIST PRODUCT');
-        } else {
-            res.status(200).json(results.rows[0]);
-        }
-    });
+    if (id!='all'){
+        pool.query(`SELECT products.* FROM PRODUCTS LEFT JOIN CATEGORIES ON PRODUCTS.cid=CATEGORIES.id WHERE PRODUCTS.id = '${id}'`, (error, results) => {
+            if (error) {
+                console.error(error);
+                res.status(500).send('NOT EXIST PRODUCT');
+            } else {
+                res.status(200).json(results.rows[0]);
+            }
+        });
+    }
 })
 
 // ==========================CUSTOMER-REVIEWS================================
@@ -123,6 +125,18 @@ router.get('/get/customer-reviews/:id', (req, res) => {
         if (error) {
             console.error(error);
             res.status(500).send('NOT EXIST CUSTOMER-REVIEWS FOR THIS PRODUCT');
+        } else {
+            res.status(200).json(results.rows);
+        }
+    });
+})
+
+// ==========================CATEGORY================================
+router.get('/get/categories/all', (req, res) => {
+    pool.query(`SELECT * FROM CATEGORIES`, (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).send('Error retrieving CATEGORIES');
         } else {
             res.status(200).json(results.rows);
         }
