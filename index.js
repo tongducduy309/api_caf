@@ -117,6 +117,20 @@ router.post('/post/customer-reviews', (req, res) => {
     });
 })
 
+router.get('/get/customer-reviews/:id', (req, res) => {
+    const id = req.params.id;
+    pool.query(`SELECT * FROM CUSTOMER-REVIEWS WHERE id = '${id}'`, (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).send('NOT EXIST PRODUCT');
+        } else {
+            res.status(200).json(results.rows);
+        }
+    });
+})
+
+
+
 app.get('/', (req, res) => {
   res.send('Hello World!')
 })
