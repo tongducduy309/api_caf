@@ -119,7 +119,7 @@ router.post('/post/customer-reviews', (req, res) => {
 
 router.get('/get/customer-reviews/:id', (req, res) => {
     const id = req.params.id;
-    pool.query(`SELECT * FROM CUSTOMER-REVIEWS WHERE id = '${id}'`, (error, results) => {
+    pool.query(`SELECT * FROM CUSTOMER-REVIEWS WHERE pid = '${id}'`, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).send('NOT EXIST CUSTOMER-REVIEWS FOR THIS PRODUCT');
