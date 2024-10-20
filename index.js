@@ -13,7 +13,11 @@ function removeVietnameseTones(str) {
              .replace(/[\u0300-\u036f]/g, '')
              .normalize('NFC');
     return str;
-  }
+}
+
+function generateId(s){
+    return removeVietnameseTones(s).replaceAll(" ","-").toLowerCase()
+}
 // const pool = new pg.Pool({
 //     host:process.env.DB_HOST,
 //     port:process.env.DB_PORT,
@@ -138,7 +142,7 @@ router.post('/post/products', (req, res) => {
     //(name,size,cost,cid) 
     const form = req.body;
     const name=form.name
-    const id = removeVietnameseTones(name)
+    const id = generateId(name)
     const size=form.size
     const cost=form.cost
     const cid=form.cid
