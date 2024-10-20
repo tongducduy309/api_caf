@@ -98,13 +98,7 @@ router.get('/get/products/all', (req, res) => {
 router.get('/get/products/:key', (req, res) => {
     let key = removeVietnameseTones(req.params.key).replace(" ","-");
     if (key!='all'){
-        let fl = true
-        let query = `SELECT * FROM PRODUCTS WHERE LOWER(name) LIKE '%${key}%'`
-        if (key.replaceAll(/\D/g, '')==key){
-            query = `SELECT * FROM PRODUCTS WHERE LOWER(name) LIKE '%${key}%' OR id = ${key}`
-            fl = false
-        }
-        pool.query(query, (error, results) => {
+        pool.query(`SELECT * FROM PRODUCTS WHERE LOWER(name) LIKE '%${key}%' OR LOWER(id) LIKE '%${key}%'`, (error, results) => {
             if (error) {
                 console.error(error);
                 res.status(500).send('NOT EXIST ANY PRODUCT');
