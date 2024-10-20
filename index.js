@@ -95,19 +95,6 @@ router.get('/get/products/all', (req, res) => {
     });
 })
 
-router.get('/get/products/items-cart', (req, res) => {
-    const id = req.params.id;
-    const ids = req.body.ids;
-    pool.query(`SELECT * FROM PRODUCTS WHERE id IN (${ids})`, (error, results) => {
-        if (error) {
-            console.error(error);
-            res.status(500).send('NOT EXIST ANY PRODUCT');
-        } else {
-            res.status(200).json(results.rows);
-        }
-    });
-})
-
 router.get('/get/products/:key', (req, res) => {
     let key = removeVietnameseTones(req.params.key);
     if (key!='all'){
