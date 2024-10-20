@@ -89,7 +89,11 @@ router.get('/get/products/all', (req, res) => {
 router.get('/get/products/:key', (req, res) => {
     const key = req.params.key;
     if (key!='all'){
-        pool.query(`SELECT * FROM PRODUCTS WHERE LOWER(name) LIKE '%${key}%' OR id = ${key}`, (error, results) => {
+        const query = `SELECT * FROM PRODUCTS WHERE LOWER(name) LIKE '%${key}%'`
+        if (key.replaceAll(/\D/g, '')==key){
+            query = `SELECT * FROM PRODUCTS WHERE LOWER(name) LIKE '%${key}%' OR id = ${key}`
+        }
+        pool.query(query, (error, results) => {
             if (error) {
                 console.error(error);
                 res.status(500).send('NOT EXIST ANY PRODUCT');
