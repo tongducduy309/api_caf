@@ -98,7 +98,7 @@ router.get('/get/products/all', (req, res) => {
 router.get('/get/products/atts/:id/:size', (req, res) => {
     const re = req.params;
     const id = re.id, size = re.size;
-    pool.query(`SELECT id,name,size,img,cost,sale FROM PRODUCTS id='${id}' AND size = ${size}`, (error, results) => {
+    pool.query(`SELECT * FROM PRODUCTS id='${id}' AND size = ${size}`, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).send('NOT EXIST ANY PRODUCT');
