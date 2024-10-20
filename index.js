@@ -97,12 +97,13 @@ router.get('/get/products/all', (req, res) => {
 
 router.get('/get/products/atts/:id', (req, res) => {
     const id = req.params.id;
-    pool.query(`SELECT * FROM PRODUCTS WHERE id=${id}`, (error, results) => {
+    const ids = req.body.ids;
+    pool.query(`SELECT * FROM PRODUCTS WHERE id=${id} IN (${ids})`, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).send('NOT EXIST ANY PRODUCT');
         } else {
-            res.status(200).json(results.rows[0]);
+            res.status(200).json(results.rows);
         }
     });
 })
