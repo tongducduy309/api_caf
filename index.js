@@ -96,7 +96,7 @@ router.get('/get/products/all', (req, res) => {
 })
 
 router.get('/get/products/:key', (req, res) => {
-    let key = removeVietnameseTones(req.params.key).replace(" ","-");
+    let key = removeVietnameseTones(req.params.key);
     if (key!='all'){
         pool.query(`SELECT * FROM PRODUCTS WHERE LOWER(name) LIKE '%${key}%' OR LOWER(id) LIKE '%${key}%'`, (error, results) => {
             if (error) {
