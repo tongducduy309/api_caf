@@ -96,9 +96,8 @@ router.get('/get/products/all', (req, res) => {
 })
 
 router.get('/get/products/atts/:id', (req, res) => {
-    const re = req.params;
-    const id = re.id;
-    pool.query(`SELECT * FROM PRODUCTS id='${id}'`, (error, results) => {
+    const id = req.params.id;
+    pool.query(`SELECT * FROM PRODUCTS id=${id}`, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).send('NOT EXIST ANY PRODUCT');
