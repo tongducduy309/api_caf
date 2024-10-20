@@ -149,13 +149,13 @@ router.post('/post/products', (req, res) => {
     //(name,size,cost,cid) 
     const form = req.body;
     const name=form.name
-    const id = generateId(name)
+    const name_id = generateId(name)
     const size=form.size
     const cost=form.cost
     const cid=form.cid
     // const sale=form.sale
-    pool.query(`INSERT INTO PRODUCTS (id,name, size,cost,cid) VALUES
-    ('${id}', '${name}', '${size}', '${cost}', '${cid}')`, (error, results) => {
+    pool.query(`INSERT INTO PRODUCTS (name_id,name, size,cost,cid) VALUES
+    ('${name_id}', '${name}', '${size}', '${cost}', '${cid}')`, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).send('Error: Insert Into');
