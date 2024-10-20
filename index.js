@@ -105,10 +105,17 @@ router.get('/get/products/:key', (req, res) => {
                 rows.forEach((row)=>{
                     if (row.name in products){
                         products[row.name].size.push(row.size)
+                        products[row.name].cost.push(row.cost)
+                        products[row.name].sale.push(row.sale)
+                        products[row.name].datesale_from.push(row.datesale_from)
+                        products[row.name].datesale_to.push(row.datesale_to)
                     }
                     else{
-                        const size = row.size
-                        row.size = [size]
+                        row.size = [row.size]
+                        row.cost = [row.cost]
+                        row.sale = [row.sale]
+                        row.datesale_from = [row.datesale_from]
+                        row.datesale_to = [row.datesale_to]
                         products[row.name] = {...row}
                     }
                 })
