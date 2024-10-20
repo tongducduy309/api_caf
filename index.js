@@ -8,7 +8,12 @@ const router = express.Router()
 app.use(express.json())
 require("dotenv").config();
 
-
+function removeVietnameseTones(str) {
+    str = str.normalize('NFD')
+             .replace(/[\u0300-\u036f]/g, '')
+             .normalize('NFC');
+    return str;
+  }
 // const pool = new pg.Pool({
 //     host:process.env.DB_HOST,
 //     port:process.env.DB_PORT,
@@ -87,7 +92,7 @@ router.get('/get/products/all', (req, res) => {
 })
 
 router.get('/get/products/:key', (req, res) => {
-    const key = req.params.key;
+    let key = removeVietnameseTones(req.params.key).replace(" ","-");
     if (key!='all'){
         let fl = true
         let query = `SELECT * FROM PRODUCTS WHERE LOWER(name) LIKE '%${key}%'`
@@ -127,6 +132,26 @@ router.get('/get/products/:key', (req, res) => {
             }
         });
     }
+})
+
+router.post('/post/products', (req, res) => {
+    //(name,size,cost,cid) 
+    const form = req.body;
+    const name=form.name
+    const id = removeVietnameseTones(name)
+    const size=form.size
+    const cost=form.cost
+    const cid=form.cid
+    // const sale=form.sale
+    pool.query(`INSERT INTO PRODUCTS (id,name, size,cost,cid) VALUES
+    ('${id}', '${name}', '${size}', '${cost}', '${cid}')`, (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).send('Error: Insert Into');
+        } else {
+            res.status(200).send('Success');
+        }
+    });
 })
 
 // ==========================CUSTOMER-REVIEWS================================
