@@ -95,6 +95,19 @@ router.get('/get/products/all', (req, res) => {
     });
 })
 
+router.get('/get/products/atts/:id', (req, res) => {
+    const re = req.params;
+    const id = re.pid, size = re.size, atts = re.atts.join(",");
+    pool.query(`SELECT id,size,${atts} FROM PRODUCTS id='${id}' AND size = ${size}`, (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).send('NOT EXIST ANY PRODUCT');
+        } else {
+            res.status(200).json(results.rows[0]);
+        }
+    });
+})
+
 router.get('/get/products/:key', (req, res) => {
     let key = removeVietnameseTones(req.params.key);
     if (key!='all'){
