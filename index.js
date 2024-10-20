@@ -95,10 +95,10 @@ router.get('/get/products/all', (req, res) => {
     });
 })
 
-router.get('/get/products/atts/:id/:size', (req, res) => {
+router.get('/get/products/atts/:id', (req, res) => {
     const re = req.params;
-    const id = re.id, size = re.size;
-    pool.query(`SELECT * FROM PRODUCTS id='${id}' AND size = ${size}`, (error, results) => {
+    const id = re.id;
+    pool.query(`SELECT * FROM PRODUCTS id='${id}'`, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).send('NOT EXIST ANY PRODUCT');
@@ -111,7 +111,7 @@ router.get('/get/products/atts/:id/:size', (req, res) => {
 router.get('/get/products/:key', (req, res) => {
     let key = removeVietnameseTones(req.params.key);
     if (key!='all'){
-        pool.query(`SELECT * FROM PRODUCTS WHERE LOWER(name) LIKE '%${key}%' OR LOWER(id) LIKE '%${key}%'`, (error, results) => {
+        pool.query(`SELECT * FROM PRODUCTS WHERE LOWER(name) LIKE '%${key}%' OR LOWER(name_id) LIKE '%${key}%'`, (error, results) => {
             if (error) {
                 console.error(error);
                 res.status(500).send('NOT EXIST ANY PRODUCT');
