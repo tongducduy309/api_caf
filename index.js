@@ -89,16 +89,34 @@ router.get('/get/products/all', (req, res) => {
 router.get('/get/products/:key', (req, res) => {
     const key = req.params.key;
     if (key!='all'){
+        let fl = true
         let query = `SELECT * FROM PRODUCTS WHERE LOWER(name) LIKE '%${key}%'`
         if (key.replaceAll(/\D/g, '')==key){
             query = `SELECT * FROM PRODUCTS WHERE LOWER(name) LIKE '%${key}%' OR id = ${key}`
+            fl = false
         }
         pool.query(query, (error, results) => {
             if (error) {
                 console.error(error);
                 res.status(500).send('NOT EXIST ANY PRODUCT');
             } else {
-                res.status(200).json(results.rows);
+                const rows = results.rows;
+                let products = {}
+                rows.forEach((row)=>{
+                    if (row.name in products){
+                        products[row.name].size.push(row.size)
+                    }
+                    else{
+                        const size = row.size
+                        row.size = [size]
+                        products[row.name] = {...row}
+                    }
+                })
+                let r = []
+                Object.keys(products).forEach((key)=>{
+                    r.push(products[key])
+                })
+                res.status(200).json(r);
             }
         });
     }
