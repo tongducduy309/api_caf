@@ -15,6 +15,33 @@ function removeVietnameseTones(str) {
     return str;
 }
 
+function group(rows){
+    
+    let products = {}
+    rows.forEach((row)=>{
+        if (row.name in products){
+            products[row.name].size.push(row.size)
+            products[row.name].cost.push(row.cost)
+            products[row.name].sale.push(row.sale)
+            products[row.name].datesale_from.push(row.datesale_from)
+            products[row.name].datesale_to.push(row.datesale_to)
+        }
+        else{
+            row.size = [row.size]
+            row.cost = [row.cost]
+            row.sale = [row.sale]
+            row.datesale_from = [row.datesale_from]
+            row.datesale_to = [row.datesale_to]
+            products[row.name] = {...row}
+        }
+    })
+    let r = []
+    Object.keys(products).forEach((key)=>{
+        r.push(products[key])
+    })
+    return r;
+}
+
 function generateId(s){
     return removeVietnameseTones(s).replaceAll(" ","-").toLowerCase()
 }
@@ -90,7 +117,7 @@ router.get('/get/products/all', (req, res) => {
             console.error(error);
             res.status(500).send('NOT EXIST ANY PRODUCT');
         } else {
-            res.status(200).json(results.rows);
+            res.status(200).json(group(results.rows));
         }
     });
 })
@@ -103,30 +130,8 @@ router.get('/get/products/:key', (req, res) => {
                 console.error(error);
                 res.status(500).send('NOT EXIST ANY PRODUCT');
             } else {
-                const rows = results.rows;
-                let products = {}
-                rows.forEach((row)=>{
-                    if (row.name in products){
-                        products[row.name].size.push(row.size)
-                        products[row.name].cost.push(row.cost)
-                        products[row.name].sale.push(row.sale)
-                        products[row.name].datesale_from.push(row.datesale_from)
-                        products[row.name].datesale_to.push(row.datesale_to)
-                    }
-                    else{
-                        row.size = [row.size]
-                        row.cost = [row.cost]
-                        row.sale = [row.sale]
-                        row.datesale_from = [row.datesale_from]
-                        row.datesale_to = [row.datesale_to]
-                        products[row.name] = {...row}
-                    }
-                })
-                let r = []
-                Object.keys(products).forEach((key)=>{
-                    r.push(products[key])
-                })
-                res.status(200).json(r);
+                
+                res.status(200).json(group(results.rows));
             }
         });
     }
