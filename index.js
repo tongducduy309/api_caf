@@ -165,8 +165,9 @@ router.post('/post/customer-reviews', (req, res) => {
     const name=form.name
     const email=form.email
     const comment=form.comment
-    pool.query(`INSERT INTO CUSTOMER_REVIEWS (pid,point,name, email,comment) VALUES
-    ('${pid}', '${point}', '${name}', '${email}', '${comment}')`, (error, results) => {
+    const name_id=form.name_id
+    pool.query(`INSERT INTO CUSTOMER_REVIEWS (name_id,pid,point,name, email,comment) VALUES
+    ('${name_id}','${pid}', '${point}', '${name}', '${email}', '${comment}')`, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).send('Error: Insert Into');
