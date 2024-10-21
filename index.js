@@ -112,7 +112,7 @@ router.get('get/users', (req, res) => {
 
 // ==========================PRODUCT================================
 router.get('/get/products/all', (req, res) => {
-    pool.query(`SELECT products.* FROM PRODUCTS LEFT JOIN CATEGORIES ON PRODUCTS.cid=CATEGORIES.id`, (error, results) => {
+    pool.query(`SELECT products.*,CATEGORIES.name,CATEGORIES.type FROM PRODUCTS LEFT JOIN CATEGORIES ON PRODUCTS.cid=CATEGORIES.id`, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).send('NOT EXIST ANY PRODUCT');
