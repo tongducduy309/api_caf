@@ -1,4 +1,4 @@
-// nodemon khoa.js
+// nodemon kien.js
 const express = require('express')
 const pg = require('pg')
 const cors = require('cors');
