@@ -221,3 +221,24 @@ app.use("/api/",router)
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
+
+// ==========================BILL================================
+
+router.post('/post/bill',(req,res))=>{
+    const bill=req.body;
+    const id=bill.id
+    const nameCustomer=bill.name
+    const contactNumber=bill.contactNumber
+    const address=bill.address
+    const BillDate=bill.BillDate
+    const total=bill.total
+    const Subtotal=bill.Subtotal
+    const discount=bill.discount
+    const payment=bill.payment
+    const status=bill.status
+    const note=bill.note
+    pool.query(`Insert into bill  (id,,nameCustomer,contactNumber,address,BillDate,total,Subtotal,discount,payment,status,note) values
+        ('${id}','${nameCustomer}','${contactNumber}','${address}','${BillDate}','')` 
+        
+    )
+}
