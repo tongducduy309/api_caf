@@ -224,7 +224,7 @@ app.listen(port, () => {
 
 // ==========================BILL================================
 
-router.post('/post/bill',(req,res))=>{
+router.post('/post/bill',(req,res)=>{
     const bill=req.body;
     const id=bill.id
     const nameCustomer=bill.name
@@ -242,3 +242,4 @@ router.post('/post/bill',(req,res))=>{
         
     )
 }
+)
