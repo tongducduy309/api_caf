@@ -62,7 +62,55 @@ const pool = new pg.Pool({
 
 //Viết code ở đây
 
+// ==========================BILL================================
 
+router.post('/post/bill',(req,res)=>{
+    const bill=req.body;
+    // const id=bill.id
+    const nameCustomer=bill.nameCustomer
+    const contactNumber=bill.contactNumber
+    const address=bill.address
+    // const BillDate=bill.BillDate
+    const total=bill.total
+    const Subtotal=bill.Subtotal
+    const discount=bill.discount
+    const payment=bill.paymentmethod
+    // const status=bill.status
+    // const note=bill.note
+    pool.query(`Insert into bill  (nameCustomer,contactNumber,address,total,Subtotal,discount,paymentmethod) values
+        ('${nameCustomer}','${contactNumber}','${address}','${total}','${Subtotal}',${discount},'${payment}')`,(error, results) =>{
+            if (error) {
+                console.error(error);
+                res.status(500).send('NOT EXIST CUSTOMER-REVIEWS FOR THIS PRODUCT');
+            } else {
+                res.status(200).send('Succes');
+            }
+        }
+    );
+}
+)
+
+// ==========================DetailBILL================================
+
+router.post('/post/detailBill',(req,res)=>{
+    const detailBill=req.body;
+    // const id=detailBill.id
+    const bid=detailBill.bid
+    const pid=detailBill.pid
+    const quantity=detailBill.quantity
+    const price=detailBill.price
+    // const sale=detailBill.sale
+    pool.query(`Insert into detailbill (bid,pid,quantity,price) values('${bid}','${pid}','${quantity}','${price}')`,(error,results)=>{
+        if(error) {
+            console.error(error);
+            res.status(500).send('NOT EXIST CUSTOMER-REVIEWS FOR THIS PRODUCT');
+        } else{
+            res.status(200).send('Success');
+        }
+    }
+    );
+}
+)
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
