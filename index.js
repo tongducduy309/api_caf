@@ -103,7 +103,7 @@ router.get('get/users', (req, res) => {
     pool.query('SELECT * FROM accounts', (error, results) => {
         if (error) {
             console.error(error);
-            res.status(500).send('Error retrieving users');
+            res.status(500).send('Error',error);
         } else {
             res.json(results.rows);
         }
@@ -115,7 +115,7 @@ router.get('/get/products/all', (req, res) => {
     pool.query(`SELECT products.*,CATEGORIES.name AS c_name,CATEGORIES.type AS c_type FROM PRODUCTS LEFT JOIN CATEGORIES ON PRODUCTS.cid=CATEGORIES.id`, (error, results) => {
         if (error) {
             console.error(error);
-            res.status(500).send('NOT EXIST ANY PRODUCT');
+            res.status(500).send('Error',error);
         } else {
             res.status(200).json(group(results.rows));
         }
@@ -128,13 +128,26 @@ router.get('/get/products/:key', (req, res) => {
         pool.query(`SELECT * FROM PRODUCTS WHERE LOWER(name) LIKE '%${key}%' OR LOWER(name_id) LIKE '%${key}%'`, (error, results) => {
             if (error) {
                 console.error(error);
-                res.status(500).send('NOT EXIST ANY PRODUCT');
+                res.status(500).send('Error',error);
             } else {
                 
                 res.status(200).json(group(results.rows));
             }
         });
     }
+})
+
+router.get('/get/products/ids/:ids', (req, res) => {
+    const ids = req.params.ids;
+    pool.query(`SELECT * FROM PRODUCTS WHERE id in (${ids})`, (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).send('Error',error);
+        } else {
+            
+            res.status(200).json(group(results.rows));
+        }
+    });
 })
 
 router.post('/post/products', (req, res) => {
@@ -182,7 +195,7 @@ router.get('/get/customer-reviews/:id', (req, res) => {
     pool.query(`SELECT * FROM CUSTOMER_REVIEWS WHERE name_id = '${id}'`, (error, results) => {
         if (error) {
             console.error(error);
-            res.status(500).send('NOT EXIST CUSTOMER-REVIEWS FOR THIS PRODUCT');
+            res.status(500).send('Error',error);
         } else {
             res.status(200).json(results.rows);
         }
@@ -194,7 +207,7 @@ router.get('/get/categories/all', (req, res) => {
     pool.query(`SELECT * FROM CATEGORIES`, (error, results) => {
         if (error) {
             console.error(error);
-            res.status(500).send('Error retrieving CATEGORIES');
+            res.status(500).send('Error',error);
         } else {
             res.status(200).json(results.rows);
         }
