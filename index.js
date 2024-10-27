@@ -168,7 +168,7 @@ router.put('/put/users/verify', (req, res) => {
             console.error(error);
             res.status(500).send('Error',error);
         } else {
-            res.status(200).send(results)
+            res.status(200).send("Successful")
         }
     });
 })
