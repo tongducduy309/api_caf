@@ -1,6 +1,17 @@
+
 const express = require('express')
+// const c = require('express-handlebars');
 const pg = require('pg')
 const cors = require('cors');
+const nodemailer = require("nodemailer");
+const handlebars = require("handlebars");
+const fs = require("fs");
+const jwt = require('jsonwebtoken');
+const generateToken = (user) => {
+    const token = jwt.sign({ userId: user.id }, 'your-secret-key'); // No 'expiresIn' option
+    return token;
+  };
+
 const app = express()
 const port = 3000
 
@@ -45,6 +56,50 @@ function group(rows){
 function generateId(s){
     return removeVietnameseTones(s).replaceAll(" ","-").toLowerCase()
 }
+
+// const hbsOptions = {
+//     viewEngine:{
+//         defaultLayout: false
+//     },
+//     viewPath: 'views'
+// }
+
+// const hbs = c.create(hbsOptions)
+
+
+
+const transporter = nodemailer.createTransport({
+    service:"gmail",
+    host: "smtp.gmail.email",
+    secure: false, // true for port 465, false for other ports
+    auth: {
+        user: "kdk2003.sgu@gmail.com",
+        pass: "zoexwccztcsxpozw",
+    },
+    });
+
+
+// transporter.use('compile', hbs)
+    
+    async function sendTo(email_to,name_to,token) {
+        const source = fs.readFileSync('email.html', 'utf-8').toString();
+        const template = handlebars.compile(source);
+        const replacements = {
+        fullname: name_to,
+        token:token
+        }; 
+        const htmlToSend = template (replacements)
+    const info = await transporter.sendMail({
+        from: '"COFFEE STORE" <kdk2003.sgu@gmail.com>', 
+        to: email_to,
+        subject: "Xác thực tài khoản", 
+        text: "Xác thực tài khoản", 
+        html:htmlToSend,
+    });
+    
+    console.log("Message sent: %s", info.messageId);
+    // Message sent: <d786aa62-4e0a-070a-47ed-0b0666549519@ethereal.email>
+    }
 // const pool = new pg.Pool({
 //     host:process.env.DB_HOST,
 //     port:process.env.DB_PORT,
@@ -77,29 +132,48 @@ router.post('/login', (req, res) => {
     });
 })
 
-//Chưa hoàn thành
-router.post('/register', (req, res) => {
+router.post('/post/register', async (req, res) => {
     const user = req.body;
-    const username=user.username
-    const password=user.password
-    const firstName=user.firstName
-    const lastName=user.lastName
+    const fullname=user.fullname
     const email = user.email
-    if (!username || !password) {
-        return res.status(400).json({ error: 'Missing required fields' });
-    }
-    pool.query(`INSERT INTO accounts (username, email, password, firstname,lastname) VALUES
-    ('${username}', '${email}', '${password}', '${firstName}', '${lastName}')`, (error, results) => {
+    const password=user.password
+
+    const token = generateToken(
+        { 
+            email: email,
+            password: password 
+        });
+    console.log(email,fullname,token);
+        
+    pool.query(`INSERT INTO users (fullname, email, password, token) VALUES
+    ('${fullname}', '${email}', '${password}', '${token}')`, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).send('Error: Insert Into');
         } else {
-            res.status(200);
+            res.status(200).send('Successful');
+        }
+    });
+
+    const response = await sendTo(email,fullname,token)
+    return res.status(200).send("Successful")
+    
+})
+
+router.put('/put/users/verify', (req, res) => {
+    const token = req.body.token
+    console.log(token);
+    pool.query(`UPDATE USERS SET verify=1 WHERE token='${token}'`, (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).send('Error',error);
+        } else {
+            res.status(200).send("Successful")
         }
     });
 })
 
-router.get('get/users', (req, res) => {
+router.get('/get/users', (req, res) => {
     pool.query('SELECT * FROM accounts', (error, results) => {
         if (error) {
             console.error(error);
@@ -216,6 +290,9 @@ router.get('/get/categories/all', (req, res) => {
 
 
 
+
+
+
 app.get('/', (req, res) => {
   res.send('Hello World!')
 })
@@ -223,7 +300,7 @@ app.get('/', (req, res) => {
 
 
 app.use(cors({
-    origin: ['http://localhost:4200' ,'https://caf-bay.vercel.app']
+    origin: ['http://localhost:4200' ,'https://caf-bay.vercel.app', 'http://localhost:3000']
    ,methods: 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
   allowedHeaders: ['Content-Type']
   }));
