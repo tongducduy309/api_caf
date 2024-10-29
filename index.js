@@ -182,7 +182,8 @@ router.put('/put/users/verify', (req, res) => {
             console.error(error);
             res.status(500).send('Error',error);
         } else {
-            return res.status(200).json({rowCount:results.rowCount})
+
+            return res.status(200).json({result:(results.rowCount==1)?'Success':'Verified'})
         }
     });
 })
