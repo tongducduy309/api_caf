@@ -7,6 +7,7 @@ const nodemailer = require("nodemailer");
 const handlebars = require("handlebars");
 const fs = require("fs");
 const jwt = require('jsonwebtoken');
+const { verify } = require('crypto');
 const generateToken = (user) => {
     const token = jwt.sign({ userId: user.id }, 'your-secret-key'); // No 'expiresIn' option
     return token;
@@ -115,19 +116,32 @@ const pool = new pg.Pool({
 // const db =pool.connect();
 
 // ==========================USER================================
-router.post('/login', (req, res) => {
-    const user = req.body;
-    const username=user.username
-    const password=user.password
-    if (!username || !password) {
-        return res.status(400).json({ error: 'Missing required fields' });
-    }
-    pool.query(`SELECT * FROM accounts WHERE USERNAME='${username}' AND PASSWORD='${password}'`, (error, results) => {
+router.get('/get/users/:token', (req, res) => {
+    const token = req.params.token;
+    pool.query(`SELECT id,fullname,email,point,verify FROM users WHERE token='${token}'`, (error, results) => {
         if (error) {
             console.error(error);
-            res.status(500).send('Error retrieving users');
+            res.status(500).send('Error');
         } else {
-            res.status(200).json(results.rows[0]);
+            const user = results.rows[0]
+            res.status(200).json(user);
+        }
+    });
+})
+
+router.get('/get/users/:email/:password', (req, res) => {
+    const email = req.params.email;
+    const password = req.params.password;
+    if (!email || !password) {
+        return res.status(400).json({ error: 'Missing required fields' });
+    }
+    pool.query(`SELECT id,fullname,email,point,verify,token FROM password WHERE email='${email}' AND PASSWORD='${password}'`, (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).send('Error');
+        } else {
+            const user = results.rows[0]
+            res.status(200).json(user);
         }
     });
 })
@@ -145,7 +159,7 @@ router.post('/post/register', async (req, res) => {
         });
     console.log(email,fullname,token);
         
-    pool.query(`INSERT INTO users (fullname, email, password, token) VALUES
+    pool.query(`IF NOT EXISTS(SELECT 1 FROM users WHERE email=${email}) THEN INSERT INTO users (fullname, email, password, token) VALUES
     ('${fullname}', '${email}', '${password}', '${token}')`, (error, results) => {
         if (error) {
             console.error(error);
