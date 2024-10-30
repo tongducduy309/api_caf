@@ -241,6 +241,9 @@ router.get('/get/products/ids/:ids', (req, res) => {
 
 router.get('/get/all-products/:name_id_category', (req, res) => {
     const name_id_category = req.params.name_id_category;
+    if (!name_id_category||name_id_category.trim()==''){
+        return res.status(400).send('Failed');
+    }
     pool.query(`SELECT * FROM PRODUCTS
         LEFT JOIN (SELECT id FROM CATEGORIES WHERE name_id='${name_id_category}') AS c ON c.id=PRODUCTS.cid`, (error, results) => {
         if (error) {
@@ -345,7 +348,7 @@ router.post('/post/categories', (req, res) => {
     const type = form.type
     // const sale=form.sale
     pool.query(`INSERT INTO CATEGORIES(name,type,name_id) VALUES
-    ('${name}', '${type}', '${name_id})`, (error, results) => {
+    ('${name}', '${type}', '${name_id}')`, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).send('Error: Insert Into');
@@ -354,6 +357,8 @@ router.post('/post/categories', (req, res) => {
         }
     });
 })
+
+
 
 
 
