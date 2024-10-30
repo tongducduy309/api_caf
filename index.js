@@ -303,6 +303,25 @@ router.get('/get/categories/all', (req, res) => {
     });
 })
 
+router.get('/get/categories/group-by-type', (req, res) => {
+    pool.query(`SELECT * FROM CATEGORIES`, (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).send('Error',error);
+        } else {
+            let group_categories = {}
+            results.rows.forEach((category)=>{
+                if (category.type in group_categories){
+                    group_categories[category.type].push(category)
+                }else{
+                    group_categories[category.type]=[category]
+                }
+            })
+            res.status(200).json(group_categories);
+        }
+    });
+})
+
 
 
 
