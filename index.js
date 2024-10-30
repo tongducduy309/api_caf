@@ -32,6 +32,7 @@ function group(rows){
     let products = {}
     rows.forEach((row)=>{
         if (row.name in products){
+            products[row.name].id.push(row.id)
             products[row.name].size.push(row.size)
             products[row.name].cost.push(row.cost)
             products[row.name].sale.push(row.sale)
@@ -39,6 +40,7 @@ function group(rows){
             products[row.name].datesale_to.push(row.datesale_to)
         }
         else{
+            row.id = [row.id]
             row.size = [row.size]
             row.cost = [row.cost]
             row.sale = [row.sale]
