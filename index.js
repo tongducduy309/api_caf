@@ -22,9 +22,9 @@ require("dotenv").config();
 
 function removeVietnameseTones(str) {
     str = str.normalize('NFD')
-             .replace(/[\u0300-\u036f]/g, '')
+             .replaceAll(/[\u0300-\u036f]/g, '')
              .normalize('NFC');
-    return str;
+    return str.replaceAll('đ','');
 }
 
 function group(rows){
@@ -55,7 +55,7 @@ function group(rows){
 }
 
 function generateId(s){
-    return removeVietnameseTones(s).replaceAll(" ","-").toLowerCase()
+    return removeVietnameseTones(s).toLowerCase().replaceAll(" ","-")
 }
 
 // const hbsOptions = {
