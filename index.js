@@ -24,7 +24,7 @@ function removeVietnameseTones(str) {
     str = str.normalize('NFD')
              .replaceAll(/[\u0300-\u036f]/g, '')
              .normalize('NFC');
-    return str.replaceAll('đ','');
+    return str.replaceAll('đ','d').replaceAll('Đ','D');
 }
 
 function group(rows){
