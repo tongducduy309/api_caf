@@ -239,6 +239,20 @@ router.get('/get/products/ids/:ids', (req, res) => {
     });
 })
 
+router.get('/get/all-products/:name_id_category', (req, res) => {
+    const name_id_category = req.params.name_id_category;
+    pool.query(`SELECT * FROM PRODUCTS
+        LEFT JOIN (SELECT id FROM CATEGORIES WHERE name_id='${name_id_category}') AS c ON c.id=PRODUCTS.cid`, (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).send('Error',error);
+        } else {
+            
+            res.status(200).json(group(results.rows));
+        }
+    });
+})
+
 router.post('/post/products', (req, res) => {
     //(name,size,cost,cid) 
     const form = req.body;
@@ -323,6 +337,23 @@ router.get('/get/categories/group-by-type', (req, res) => {
     });
 })
 
+router.post('/post/categories', (req, res) => {
+    //(name,size,cost,cid) 
+    const form = req.body;
+    const name=form.name
+    const name_id = generateId(name)
+    const type = form.type
+    // const sale=form.sale
+    pool.query(`INSERT INTO CATEGORIES(name,type,name_id) VALUES
+    ('${name}', '${type}', '${name_id})`, (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).send('Error: Insert Into');
+        } else {
+            res.status(200).send('Success');
+        }
+    });
+})
 
 
 
