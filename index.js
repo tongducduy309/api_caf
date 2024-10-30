@@ -311,10 +311,11 @@ router.get('/get/categories/group-by-type', (req, res) => {
         } else {
             let group_categories = {}
             results.rows.forEach((category)=>{
-                if (category.type in group_categories){
-                    group_categories[category.type].push(category)
+                const c = {...category,name_id:generateId(category.name)}
+                if (c.type in group_categories){
+                    group_categories[category.type].push(c)
                 }else{
-                    group_categories[category.type]=[category]
+                    group_categories[category.type]=[c]
                 }
             })
             res.status(200).json(group_categories);
