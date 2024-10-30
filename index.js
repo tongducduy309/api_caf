@@ -328,11 +328,10 @@ router.get('/get/categories/group-by-type', (req, res) => {
         } else {
             let group_categories = {}
             results.rows.forEach((category)=>{
-                const c = {...category,name_id:generateId(category.name)}
-                if (c.type in group_categories){
-                    group_categories[category.type].push(c)
+                if (category.type in group_categories){
+                    group_categories[category.type].push(category)
                 }else{
-                    group_categories[category.type]=[c]
+                    group_categories[category.type]=[category]
                 }
             })
             res.status(200).json(group_categories);
@@ -367,8 +366,6 @@ router.post('/post/categories', (req, res) => {
 app.get('/', (req, res) => {
   res.send('Hello World!')
 })
-
-
 
 app.use(cors({
     origin: ['http://localhost:4200' ,'https://caf-bay.vercel.app', 'http://localhost:3000']
