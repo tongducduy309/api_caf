@@ -150,7 +150,6 @@ router.get('/get/users/:email/:password', (req, res) => {
             console.error(error);
             res.status(500).json({result:'Failed'});
         } else {
-            return res.status(200).json(results);
             if (results.rowCount==0)
                 return res.status(200).json({result:'Not Exist'});
             const user = results.rows[0]
