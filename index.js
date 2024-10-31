@@ -126,6 +126,12 @@ router.get('/get/users/:token', (req, res) => {
             res.status(500).send('Error');
         } else {
             const user = results.rows[0]
+            if (user.verify==1){
+                user['result']='Success'
+            }
+            else{
+                user = {result:'Fail'}
+            }
             res.status(200).json(user);
         }
     });
@@ -143,6 +149,12 @@ router.get('/get/users/:email/:password', (req, res) => {
             res.status(500).send('Error');
         } else {
             const user = results.rows[0]
+            if (user.verify==1){
+                user['result']='Success'
+            }
+            else{
+                user = {result:'Fail'}
+            }
             res.status(200).json(user);
         }
     });
