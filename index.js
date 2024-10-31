@@ -71,20 +71,21 @@ function generateId(s){
 
 
 
-const transporter = nodemailer.createTransport({
-    service:"gmail",
-    host: "smtp.gmail.email",
-    secure: false, // true for port 465, false for other ports
-    auth: {
-        user: "kdk2003.sgu@gmail.com",
-        pass: "zoexwccztcsxpozw",
-    },
-    });
+
 
 
 // transporter.use('compile', hbs)
     
     async function sendTo(email_to,name_to,token) {
+        const transporter = nodemailer.createTransport({
+            service:"gmail",
+            host: "smtp.gmail.email",
+            secure: false, // true for port 465, false for other ports
+            auth: {
+                user: "kdk2003.sgu@gmail.com",
+                pass: "zoexwccztcsxpozw",
+            },
+            });
         const source = fs.readFileSync('email.html', 'utf-8').toString();
         const template = handlebars.compile(source);
         const replacements = {
@@ -189,8 +190,8 @@ router.post('/post/register', async (req, res) => {
         }
     });
 
-    // const response = await sendTo(email,fullname,token)
-    // return res.status(200).send("Successful")
+    await sendTo(email,fullname,token)
+    return res.status(200).send("Successful")
     
 })
 
