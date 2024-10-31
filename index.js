@@ -179,8 +179,8 @@ router.post('/post/register', async (req, res) => {
         });
     console.log(email,fullname,token);
         
-    pool.query(`IF NOT EXISTS(SELECT 1 FROM users WHERE email=${email}) THEN INSERT INTO users (fullname, email, password, token) VALUES
-    ('${fullname}', '${email}', '${password}', '${token}')`, (error, results) => {
+    pool.query(`INSERT INTO users (fullname, email, password, token) VALUES
+    ('${fullname}', '${email}', '${password}', '${token}') ON CONFLICT (email) DO NOTHING;`, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).send('Error: Insert Into');
