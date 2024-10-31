@@ -123,7 +123,7 @@ router.get('/get/users/:token', (req, res) => {
     pool.query(`SELECT id,fullname,email,point,verify FROM USERS WHERE token='${token}'`, (error, results) => {
         if (error) {
             console.error(error);
-            res.status(500).send('Error');
+            res.status(500).json({result:'Failed'});
         } else {
             if (results.rowCount==0)
                 return res.status(200).json({result:'Not Exist'});
@@ -143,13 +143,14 @@ router.get('/get/users/:email/:password', (req, res) => {
     const email = req.params.email;
     const password = req.params.password;
     if (!email || !password) {
-        return res.status(400).json({ error: 'Missing required fields' });
+        return res.status(400).json({ result: 'Missing required fields' });
     }
     pool.query(`SELECT id,fullname,email,point,verify,token FROM USERS WHERE email='${email}' AND password='${password}'`, (error, results) => {
         if (error) {
             console.error(error);
-            res.status(500).send('Error');
+            res.status(500).json({result:'Failed'});
         } else {
+            return res.status(200).json(results);
             if (results.rowCount==0)
                 return res.status(200).json({result:'Not Exist'});
             const user = results.rows[0]
