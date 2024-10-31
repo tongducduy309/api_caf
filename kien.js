@@ -90,6 +90,11 @@ router.post('/post/bill',(req,res)=>{
 }
 )
 
+router.get('/get/bill',(req,res)=>{
+    const id=req.params
+})
+
+
 // ==========================DetailBILL================================
 
 router.post('/post/detailBill',(req,res)=>{
@@ -98,9 +103,9 @@ router.post('/post/detailBill',(req,res)=>{
     const bid=detailBill.bid
     const pid=detailBill.pid
     const quantity=detailBill.quantity
-    const price=detailBill.price
-    // const sale=detailBill.sale
-    pool.query(`Insert into detailbill (bid,pid,quantity,price) values('${bid}','${pid}','${quantity}','${price}')`,(error,results)=>{
+    const price=detailBill.cost
+    const sale=detailBill.sale
+    pool.query(`Insert into detailbill (bid,pid,quantity,price) values('${bid}','${pid}','${quantity}','${cost}')`,(error,results)=>{
         if(error) {
             console.error(error);
             res.status(500).send('NOT EXIST CUSTOMER-REVIEWS FOR THIS PRODUCT');
@@ -111,6 +116,8 @@ router.post('/post/detailBill',(req,res)=>{
     );
 }
 )
+
+
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
