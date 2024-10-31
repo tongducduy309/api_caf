@@ -180,8 +180,7 @@ router.post('/post/register', async (req, res) => {
     console.log(email,fullname,token);
         
     pool.query(`INSERT INTO users (fullname, email, password, token) VALUES
-    ('${fullname}', '${email}', '${password}', '${token}')'
-);`, (error, results) => {
+    ('${fullname}', '${email}', '${password}', '${token}')`, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).send('Error: Insert Into');
