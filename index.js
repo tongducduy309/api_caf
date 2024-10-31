@@ -143,7 +143,7 @@ router.get('/get/users/:email/:password', (req, res) => {
     if (!email || !password) {
         return res.status(400).json({ error: 'Missing required fields' });
     }
-    pool.query(`SELECT id,fullname,email,point,verify,token FROM UESRS WHERE email='${email}' AND password='${password}'`, (error, results) => {
+    pool.query(`SELECT id,fullname,email,point,verify,token FROM USERS WHERE email='${email}' AND password='${password}'`, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).send('Error');
