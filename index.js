@@ -120,7 +120,7 @@ const pool = new pg.Pool({
 // ==========================USER================================
 router.get('/get/users/:token', (req, res) => {
     const token = req.params.token;
-    pool.query(`SELECT id,fullname,email,point,verify FROM users WHERE token='${token}'`, (error, results) => {
+    pool.query(`SELECT id,fullname,email,point,verify FROM USERS WHERE token='${token}'`, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).send('Error');
@@ -143,7 +143,7 @@ router.get('/get/users/:email/:password', (req, res) => {
     if (!email || !password) {
         return res.status(400).json({ error: 'Missing required fields' });
     }
-    pool.query(`SELECT id,fullname,email,point,verify,token FROM password WHERE email='${email}' AND PASSWORD='${password}'`, (error, results) => {
+    pool.query(`SELECT id,fullname,email,point,verify,token FROM UESRS WHERE email='${email}' AND password='${password}'`, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).send('Error');
