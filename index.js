@@ -179,7 +179,7 @@ router.post('/post/register', async (req, res) => {
         });
     console.log(email,fullname,token);
         
-    pool.query(`INSERT INTO users (fullname, email, password, token) VALUES
+    pool.query(`INSERT INTO USERS (fullname, email, password, token) VALUES
     ('${fullname}', '${email}', '${password}', '${token}')`, (error, results) => {
         if (error) {
             console.error(error);
@@ -189,8 +189,8 @@ router.post('/post/register', async (req, res) => {
         }
     });
 
-    const response = await sendTo(email,fullname,token)
-    return res.status(200).send("Successful")
+    // const response = await sendTo(email,fullname,token)
+    // return res.status(200).send("Successful")
     
 })
 
@@ -389,7 +389,7 @@ app.get('/', (req, res) => {
 
 app.use(cors({
     origin: ['http://localhost:4200' ,'https://caf-bay.vercel.app', 'http://localhost:3000']
-   ,methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+   ,methods: 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
   allowedHeaders: ['Content-Type']
   }));
 
