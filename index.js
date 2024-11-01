@@ -9,7 +9,7 @@ const fs = require("fs");
 const jwt = require('jsonwebtoken');
 const { verify } = require('crypto');
 const generateToken = (user) => {
-    const token = jwt.sign({ userId: user.id }, 'your-secret-key'); // No 'expiresIn' option
+    const token = jwt.sign({ userId: user.id }, 'cat-store'); // No 'expiresIn' option
     return token;
   };
 
@@ -181,17 +181,17 @@ router.post('/post/register', async (req, res) => {
     console.log(email,fullname,token);
         
     pool.query(`INSERT INTO USERS (fullname, email, password, token) VALUES
-    ('${fullname}', '${email}', '${password}', '${token}')`, (error, results) => {
+    ('${fullname}', '${email}', '${password}', '${token}')`, async (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).send('Error: Insert Into');
         } else {
-            res.status(200).send('Successful');
+            await sendTo(email,fullname,token)
+            return res.status(200).send("Successful")
         }
     });
 
-    await sendTo(email,fullname,token)
-    return res.status(200).send("Successful")
+    
     
 })
 
