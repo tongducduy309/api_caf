@@ -8,12 +8,17 @@ const handlebars = require("handlebars");
 const fs = require("fs");
 const jwt = require('jsonwebtoken');
 const { verify } = require('crypto');
+const path = require('path');
+
+
+
 const generateToken = (user) => {
     const token = jwt.sign({ userId: user.id }, 'cat-store'); // No 'expiresIn' option
     return token;
   };
 
 const app = express()
+app.use(express.static(path.join(__dirname, 'public')));
 const port = 3000
 
 const router = express.Router()
