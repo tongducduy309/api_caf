@@ -80,7 +80,7 @@ function generateId(s){
         try {
             const transporter = nodemailer.createTransport({
                 service:"gmail",
-                host: "smtp.gmail.email",
+                host: "smtp.gmail.com",
                 secure: false, // true for port 465, false for other ports
                 auth: {
                     user: "kdk2003.sgu@gmail.com",
