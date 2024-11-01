@@ -93,7 +93,7 @@ app.get('/email', (req, res) => {
                 pass: "zoexwccztcsxpozw",
             },
             });
-        const source = path.join(__dirname, 'public', 'email.html')
+        const source = fs.readFileSync(path.join(__dirname, 'public', 'email.html'), 'utf-8').toString();
         const template = handlebars.compile(source);
         const replacements = {
         fullname: name_to,
