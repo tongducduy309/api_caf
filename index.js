@@ -77,35 +77,31 @@ function generateId(s){
 // transporter.use('compile', hbs)
     
     async function sendTo(email_to,name_to,token) {
-        try {
-            const transporter = nodemailer.createTransport({
-                service:"gmail",
-                host: "smtp.gmail.com",
-                secure: false, // true for port 465, false for other ports
-                auth: {
-                    user: "kdk2003.sgu@gmail.com",
-                    pass: "zoexwccztcsxpozw",
-                },
-                });
-            const source = fs.readFileSync('email.html', 'utf-8').toString();
-            const template = handlebars.compile(source);
-            const replacements = {
-            fullname: name_to,
-            token:token
-            }; 
-            const htmlToSend = template (replacements)
-        const info = await transporter.sendMail({
-            from: '"COFFEE STORE" <kdk2003.sgu@gmail.com>', 
-            to: email_to,
-            subject: "Xác thực tài khoản", 
-            text: "Xác thực tài khoản", 
-            html:htmlToSend,
-        });
-        
-        console.log("Message sent: %s", info.messageId);
-        } catch (error) {
-            console.log(error);
-        }
+        const transporter = nodemailer.createTransport({
+            service:"gmail",
+            host: "smtp.gmail.com",
+            secure: false, // true for port 465, false for other ports
+            auth: {
+                user: "kdk2003.sgu@gmail.com",
+                pass: "zoexwccztcsxpozw",
+            },
+            });
+        const source = fs.readFileSync('./email.html', 'utf-8').toString();
+        const template = handlebars.compile(source);
+        const replacements = {
+        fullname: name_to,
+        token:token
+        }; 
+        const htmlToSend = template (replacements)
+    const info = await transporter.sendMail({
+        from: '"COFFEE STORE" <kdk2003.sgu@gmail.com>', 
+        to: email_to,
+        subject: "Xác thực tài khoản", 
+        text: "Xác thực tài khoản", 
+        html:htmlToSend,
+    });
+    
+    console.log("Message sent: %s", info.messageId);
     // Message sent: <d786aa62-4e0a-070a-47ed-0b0666549519@ethereal.email>
     }
 // const pool = new pg.Pool({
