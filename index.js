@@ -86,7 +86,7 @@ function generateId(s){
                 pass: "zoexwccztcsxpozw",
             },
             });
-        const source = fs.readFileSync('./email.html', 'utf-8').toString();
+        const source = fs.readFileSync('email.html', 'utf-8').toString();
         const template = handlebars.compile(source);
         const replacements = {
         fullname: name_to,
