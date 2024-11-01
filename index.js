@@ -77,8 +77,8 @@ function generateId(s){
 
 
 app.get('/email', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'email.html'));
-  });
+  res.sendFile();
+});
 
 
 // transporter.use('compile', hbs)
@@ -93,7 +93,7 @@ app.get('/email', (req, res) => {
                 pass: "zoexwccztcsxpozw",
             },
             });
-        const source = fs.readFileSync('email.html', 'utf-8').toString();
+        const source = path.join(__dirname, 'public', 'email.html')
         const template = handlebars.compile(source);
         const replacements = {
         fullname: name_to,
