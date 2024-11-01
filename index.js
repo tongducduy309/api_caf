@@ -76,7 +76,9 @@ function generateId(s){
 
 
 
-
+app.get('/email', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'email.html'));
+  });
 
 
 // transporter.use('compile', hbs)
