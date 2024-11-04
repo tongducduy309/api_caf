@@ -190,6 +190,24 @@ FULL JOIN (SELECT * FROM address) as ares ON ares.uid='${uid}'`, (error, results
     });
 })
 
+router.post('/post/users/address', (req, res) => {
+    const form = req.body;
+    const uid=form.uid
+    const receiver=form.receiver
+    const contactNumber=form.contactNumber
+    const address=form.address
+    const addressDefault=form.addressDefault
+    pool.query(`INSERT INTO Address (uid,receiver, contactNumber,address, addressDefault) VALUES
+    ('${uid}', '${receiver}', '${contactNumber}', '${address}', '${addressDefault}')`, (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).send('Error: Insert Into');
+        } else {
+            res.status(200).send('Success');
+        }
+    });
+})
+
 
 router.post('/post/register', async (req, res) => {
     const user = req.body;
@@ -202,7 +220,6 @@ router.post('/post/register', async (req, res) => {
             email: email,
             password: password 
         });
-    console.log(email,fullname,token);
         
     pool.query(`INSERT INTO USERS (fullname, email, password, token) VALUES
     ('${fullname}', '${email}', '${password}', '${token}')`, async (error, results) => {
