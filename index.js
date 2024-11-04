@@ -174,6 +174,23 @@ router.get('/get/users/:email/:password', (req, res) => {
     });
 })
 
+
+router.get('/get/users/address/:uid', (req, res) => {
+    const uid = req.params.uid;
+    pool.query(`SELECT ares.* FROM users
+FULL JOIN (SELECT * FROM address) as ares ON ares.uid='${uid}'`, (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).json({result:'Failed'});
+        } else {
+            const address = results.rows
+            address['result']='Success'
+            res.status(200).json(address);
+        }
+    });
+})
+
+
 router.post('/post/register', async (req, res) => {
     const user = req.body;
     const fullname=user.fullname
