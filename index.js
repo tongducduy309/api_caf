@@ -93,7 +93,7 @@ app.get('/email', (req, res) => {
                 pass: "zoexwccztcsxpozw",
             },
             });
-        const source = fs.readFileSync(path.join(__dirname, 'public', 'email.html'), 'utf-8').toString();
+        const source = fs.readFileSync(path.join(__dirname, 'template', 'verify.html'), 'utf-8').toString();
         const template = handlebars.compile(source);
         const replacements = {
         fullname: name_to,
@@ -307,7 +307,7 @@ router.get('/get/all-products/:name_id_category', (req, res) => {
         return res.status(400).send('Failed');
     }
     pool.query(`SELECT PRODUCTS.* FROM PRODUCTS,(SELECT id FROM CATEGORIES WHERE name_id='${name_id_category}') AS c
-        WHERE c.id=PRODUCTS.cid`, (error, results) => {
+        WHERE c.id=PRODUCTS.cid AND PRODUCTS.shelf_status=1`, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).send('Error',error);
