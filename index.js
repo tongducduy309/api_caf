@@ -224,7 +224,7 @@ router.post('/post/register', async (req, res) => {
     const user = req.body;
     const fullname=user.fullname
     const email = user.email
-    const password=await argon2.hash(password);
+    const password=await argon2.hash(user.password);
 
     const token = generateToken(
         { 
