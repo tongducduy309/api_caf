@@ -326,7 +326,8 @@ router.get('/get/all-products/:name_id_category', (req, res) => {
         return res.status(400).send('Failed');
     }
     pool.query(`SELECT PRODUCTS.* FROM PRODUCTS,(SELECT id FROM CATEGORIES WHERE name_id='${name_id_category}') AS c
-        WHERE c.id=PRODUCTS.cid AND PRODUCTS.shelf_status=1`, (error, results) => {
+        WHERE c.id=PRODUCTS.cid`, (error, results) => {
+            // AND PRODUCTS.shelf_status=1
         if (error) {
             console.error(error);
             res.status(500).send('Error',error);
