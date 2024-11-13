@@ -7,7 +7,7 @@ const nodemailer = require("nodemailer");
 const handlebars = require("handlebars");
 const fs = require("fs");
 const jwt = require('jsonwebtoken');
-const { verify } = require('crypto');
+// const { verify } = require('crypto');
 const path = require('path');
 const bcrypt = require('bcrypt');
 
