@@ -11,11 +11,7 @@ const jwt = require('jsonwebtoken');
 const path = require('path');
 const bcrypt = require('bcrypt');
 
-app.use(cors({
-    origin: ['http://localhost:4200' ,'https://caf-bay.vercel.app', 'http://localhost:3000']
-   ,methods: 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
-  allowedHeaders: ['Content-Type']
-  }));
+
 
 const generateToken = (user) => {
     const token = jwt.sign({ userId: user.id }, 'cat-store'); // No 'expiresIn' option
@@ -453,7 +449,11 @@ app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 
-
+app.use(cors({
+    origin: ['http://localhost:4200' ,'https://caf-bay.vercel.app', 'http://localhost:3000']
+   ,methods: 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+  allowedHeaders: ['Content-Type']
+  }));
 
 app.use("/api/",router)
 
