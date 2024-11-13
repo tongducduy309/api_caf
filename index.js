@@ -143,7 +143,6 @@ router.get('/get/users/:token', (req, res) => {
             else{
                 user = {result:'Not Verify'}
             }
-            delete user['password']
             res.status(200).json(user);
         }
     });
