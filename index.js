@@ -250,6 +250,20 @@ router.put('/put/users/verify', (req, res) => {
     });
 })
 
+router.put('/put/users/changeName', (req, res) => {
+    const uid = req.body.uid
+    const fullname = req.body.fullname
+    pool.query(`UPDATE USERS SET fullname='${fullname}' WHERE id='${uid}'`, (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).send('Error',error);
+        } else {
+
+            return res.status(200).json({result:(results.rowCount==1)?'Success':'Failed'})
+        }
+    });
+})
+
 router.get('/get/users', (req, res) => {
     pool.query('SELECT * FROM accounts', (error, results) => {
         if (error) {
