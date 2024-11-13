@@ -9,6 +9,7 @@ const fs = require("fs");
 const jwt = require('jsonwebtoken');
 const { verify } = require('crypto');
 const path = require('path');
+const bcrypt = require('bcrypt');
 
 
 
@@ -128,7 +129,7 @@ const pool = new pg.Pool({
 // ==========================USER================================
 router.get('/get/users/:token', (req, res) => {
     const token = req.params.token;
-    pool.query(`SELECT id,fullname,email,point,verify FROM USERS WHERE token='${token}'`, (error, results) => {
+    pool.query(`SELECT id,fullname,email,point,verify,password FROM USERS WHERE token='${token}'`, async (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).json({result:'Failed'});
@@ -136,12 +137,16 @@ router.get('/get/users/:token', (req, res) => {
             if (results.rowCount==0)
                 return res.status(200).json({result:'Not Exist'});
             const user = results.rows[0]
+            const isMatch = await bcrypt.compare(password, user.password);
+            if (!isMatch)
+                return res.status(200).json({result:'Not Exist'});
             if (user.verify==1){
                 user['result']='Success'
             }
             else{
                 user = {result:'Not Verify'}
             }
+            delete user['password']
             res.status(200).json(user);
         }
     });
@@ -155,7 +160,7 @@ router.get('/get/users/:email/:password', (req, res) => {
     if (!email || !password) {
         return res.status(400).json({ result: 'Missing required fields' });
     }
-    pool.query(`SELECT id,fullname,email,point,verify,token FROM USERS WHERE email='${email}' AND password='${password}'`, (error, results) => {
+    pool.query(`SELECT id,fullname,email,point,verify,token,password FROM USERS WHERE email='${email}'`, async (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).json({result:'Failed'});
@@ -163,12 +168,16 @@ router.get('/get/users/:email/:password', (req, res) => {
             if (results.rowCount==0)
                 return res.status(200).json({result:'Not Exist'});
             const user = results.rows[0]
+            const isMatch = await bcrypt.compare(password, user.password);
+            if (!isMatch)
+                return res.status(200).json({result:'Not Exist'});
             if (user.verify==1){
                 user['result']='Success'
             }
             else{
                 user = {result:'Not Verify'}
             }
+            delete user['password']
             res.status(200).json(user);
         }
     });
@@ -213,7 +222,7 @@ router.post('/post/register', async (req, res) => {
     const user = req.body;
     const fullname=user.fullname
     const email = user.email
-    const password=user.password
+    const password=await bcrypt.hash(user.password, 10)
 
     const token = generateToken(
         { 
@@ -264,16 +273,16 @@ router.put('/put/users/changeName', (req, res) => {
     });
 })
 
-router.get('/get/users', (req, res) => {
-    pool.query('SELECT * FROM accounts', (error, results) => {
-        if (error) {
-            console.error(error);
-            res.status(500).send('Error',error);
-        } else {
-            res.json(results.rows);
-        }
-    });
-})
+// router.get('/get/users', (req, res) => {
+//     pool.query('SELECT * FROM accounts', (error, results) => {
+//         if (error) {
+//             console.error(error);
+//             res.status(500).send('Error',error);
+//         } else {
+//             res.json(results.rows);
+//         }
+//     });
+// })
 
 // ==========================PRODUCT================================
 router.get('/get/products/all', (req, res) => {
