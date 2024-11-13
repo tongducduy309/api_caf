@@ -129,7 +129,7 @@ const pool = new pg.Pool({
 // ==========================USER================================
 router.get('/get/users/:token', (req, res) => {
     const token = req.params.token;
-    pool.query(`SELECT id,fullname,email,point,verify FROM USERS WHERE token='${token}'`, async (error, results) => {
+    pool.query(`SELECT id,fullname,email,point,verify FROM USERS WHERE token='${token}'`, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).json({result:'Failed'});
