@@ -65,6 +65,12 @@ function generateId(s){
     return removeVietnameseTones(s).toLowerCase().replaceAll(" ","-")
 }
 
+async function verifyPassword(password,   
+ hash) {
+    const match = await argon2.verify(hash, password);
+    return match;
+}
+
 // const hbsOptions = {
 //     viewEngine:{
 //         defaultLayout: false
@@ -163,7 +169,7 @@ router.get('/get/users/:email/:password', (req, res) => {
             if (results.rowCount==0)
                 return res.status(200).json({result:'Not Exist'});
             const user = results.rows[0]
-            const isMatch = await bcrypt.compare(password, user.password);
+            const isMatch = await argon2.verify(user.password, password);
             if (!isMatch)
                 return res.status(200).json({result:'Not Exist'});
             if (user.verify==1){
@@ -217,7 +223,7 @@ router.post('/post/register', async (req, res) => {
     const user = req.body;
     const fullname=user.fullname
     const email = user.email
-    const password=await bcrypt.hash(user.password, 10)
+    const password=await argon2.hash(password);
 
     const token = generateToken(
         { 
