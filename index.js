@@ -186,7 +186,7 @@ router.get('/get/users/:email/:password', (req, res) => {
 })
 
 
-router.get('/get/users/address/:uid', (req, res) => {
+router.get('/get/address-of-users/:uid', (req, res) => {
     const uid = req.params.uid;
     pool.query(`SELECT ares.* FROM users
 FULL JOIN (SELECT * FROM address) as ares ON ares.uid='${uid}'`, (error, results) => {
