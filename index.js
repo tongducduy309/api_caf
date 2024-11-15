@@ -172,7 +172,7 @@ router.get('/get/users/:email/:password', (req, res) => {
             const user = results.rows[0]
             const isMatch = await argon2.verify(user.password, password);
             if (!isMatch)
-                return res.status(200).json({result:'Not Exist'});
+                return res.status(200).json({result:'Wrong Password'});
             if (user.verify==1){
                 user['result']='Success'
             }
@@ -208,7 +208,7 @@ router.post('/post/users/address', (req, res) => {
     const contactNumber=form.contactNumber
     const address=form.address
     const addressDefault=form.addressDefault
-    pool.query(`INSERT INTO Address (uid,receiver, contactNumber,address, addressDefault) VALUES
+    pool.query(`INSERT INTO Address (uid,receiver, contactNumber,address) VALUES
     ('${uid}', '${receiver}', '${contactNumber}', '${address}', '${addressDefault}')`, (error, results) => {
         if (error) {
             console.error(error);
@@ -232,14 +232,17 @@ router.post('/post/register', async (req, res) => {
             password: password 
         });
         
-    pool.query(`INSERT INTO USERS (fullname, email, password, token) VALUES
-    ('${fullname}', '${email}', '${password}', '${token}')`, async (error, results) => {
+    pool.query(`SELECT ('${fullname}', '${email}', '${password}', '${token}')`, async (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).send('Error: Insert Into');
         } else {
-            await sendTo(email,fullname,token)
-            return res.status(200).send("Successful")
+            if (results=='Success'){
+                await sendTo(email,fullname,token)
+                return res.status(200).send("Successful")
+            }
+            else return res.status(200).send("Failed")
+            
         }
     });
 
@@ -447,7 +450,23 @@ router.post('/post/categories', (req, res) => {
 })
 
 
-
+// ==========================CHECKOUT================================
+router.post('/post/checkout', (req, res) => {
+    const form = req.body;
+    const uid=form.uid
+    const bill=form.bill
+    const user=form.user
+    const products=form.products
+    pool.query(`INSERT INTO CUSTOMER_REVIEWS (name_id,pid,point,name, email,comment) VALUES
+    ('${name_id}','${pid}', '${point}', '${name}', '${email}', '${comment}')`, (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).send('Error: Insert Into');
+        } else {
+            res.status(200).send('Success');
+        }
+    });
+})
 
 
 
