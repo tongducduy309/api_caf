@@ -232,7 +232,7 @@ router.post('/post/register', async (req, res) => {
             password: password 
         });
         
-    pool.query(`SELECT ('${fullname}', '${email}', '${password}', '${token}')`, async (error, results) => {
+    pool.query(`SELECT REGISTER ('${fullname}', '${email}', '${password}', '${token}')`, async (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).send('Error: Insert Into');
