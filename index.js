@@ -237,8 +237,7 @@ router.post('/post/register', async (req, res) => {
             console.error(error);
             res.status(500).send('Error: Insert Into');
         } else {
-            return res.json(results)
-            if (results=='Success'){
+            if (results.rows.register=='Success'){
                 await sendTo(email,fullname,token)
                 return res.status(200).send("Successful")
             }
