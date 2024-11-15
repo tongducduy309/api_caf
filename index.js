@@ -188,8 +188,7 @@ router.get('/get/users/:email/:password', (req, res) => {
 
 router.get('/get/address-of-user/:uid', (req, res) => {
     const uid = req.params.uid;
-    pool.query(`SELECT ares.* FROM users
-FULL JOIN (SELECT * FROM address) as ares ON ares.uid='${uid}'`, (error, results) => {
+    pool.query(`SELECT * FROM address WHERE uid='${uid}'`, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).json({result:'Failed'});
