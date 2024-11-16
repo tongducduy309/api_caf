@@ -89,24 +89,25 @@ app.get('/email', (req, res) => {
 
 
 // transporter.use('compile', hbs)
+const transporter = nodemailer.createTransport({
+    service:"gmail",
+    host: "smtp.gmail.com",
+    secure: false, // true for port 465, false for other ports
+    auth: {
+        user: "kdk2003.sgu@gmail.com",
+        pass: "zoexwccztcsxpozw",
+    },
+});
     
-    async function sendTo(email_to,name_to,token) {
-        const transporter = nodemailer.createTransport({
-            service:"gmail",
-            host: "smtp.gmail.com",
-            secure: false, // true for port 465, false for other ports
-            auth: {
-                user: "kdk2003.sgu@gmail.com",
-                pass: "zoexwccztcsxpozw",
-            },
-            });
-        const source = fs.readFileSync(path.join(__dirname, 'template', 'verify.html'), 'utf-8').toString();
-        const template = handlebars.compile(source);
-        const replacements = {
-        fullname: name_to,
-        token:token
-        }; 
-        const htmlToSend = template (replacements)
+async function sendEmail_register(email_to,name_to,token) {
+    
+    const source = fs.readFileSync(path.join(__dirname, 'template', 'verify.html'), 'utf-8').toString();
+    const template = handlebars.compile(source);
+    const replacements = {
+    fullname: name_to,
+    token:token
+    }; 
+    const htmlToSend = template (replacements)
     const info = await transporter.sendMail({
         from: '"COFFEE STORE" <kdk2003.sgu@gmail.com>', 
         to: email_to,
@@ -114,10 +115,35 @@ app.get('/email', (req, res) => {
         text: "Xác thực tài khoản", 
         html:htmlToSend,
     });
+
+    console.log("Message sent: %s", info.messageId)
+}
+
+async function sendEmail_Order(email_to,user) {
     
-    console.log("Message sent: %s", info.messageId);
-    // Message sent: <d786aa62-4e0a-070a-47ed-0b0666549519@ethereal.email>
-    }
+    const source = fs.readFileSync(path.join(__dirname, 'template', 'bill.html'), 'utf-8').toString();
+    const template = handlebars.compile(source);
+    const replacements = {
+    user:user,
+    products:[
+        {name:"C",
+            quantity:2,
+            size:"L",
+            note:"Ít đá"
+        }
+    ]
+    }; 
+    const htmlToSend = template (replacements)
+    const info = await transporter.sendMail({
+        from: '"COFFEE STORE" <kdk2003.sgu@gmail.com>', 
+        to: email_to,
+        subject: "Thông báo đơn hàng", 
+        text: "Thông báo đơn hàng", 
+        html:htmlToSend,
+    });
+
+    console.log("Message sent: %s", info.messageId)
+}
 // const pool = new pg.Pool({
 //     host:process.env.DB_HOST,
 //     port:process.env.DB_PORT,
@@ -214,9 +240,8 @@ router.post('/post/users/address', (req, res) => {
     const receiver=form.receiver
     const contactNumber=form.contactNumber
     const address=form.address
-    const addressDefault=form.addressDefault
     pool.query(`INSERT INTO Address (uid,receiver, contactNumber,address) VALUES
-    ('${uid}', '${receiver}', '${contactNumber}', '${address}', '${addressDefault}')`, (error, results) => {
+    ('${uid}', '${receiver}', '${contactNumber}', '${address}')`, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).send('Error: Insert Into');
@@ -245,7 +270,7 @@ router.post('/post/register', async (req, res) => {
             res.status(500).send('Error: Insert Into');
         } else {
             if (results.rows[0].register=='Success'){
-                await sendTo(email,fullname,token)
+                await sendEmail_register(email,fullname,token)
                 return res.status(200).send("Successful")
             }
             else return res.status(200).send("Failed")
@@ -458,21 +483,14 @@ router.post('/post/categories', (req, res) => {
 
 
 // ==========================CHECKOUT================================
-router.post('/post/checkout', (req, res) => {
+router.post('/post/checkout', async (req, res) => {
     const form = req.body;
-    const uid=form.uid
-    const bill=form.bill
+    // const uid=form.uid
+    // const bill=form.bill
     const user=form.user
-    const products=form.products
-    pool.query(`INSERT INTO CUSTOMER_REVIEWS (name_id,pid,point,name, email,comment) VALUES
-    ('${name_id}','${pid}', '${point}', '${name}', '${email}', '${comment}')`, (error, results) => {
-        if (error) {
-            console.error(error);
-            res.status(500).send('Error: Insert Into');
-        } else {
-            res.status(200).send('Success');
-        }
-    });
+    await sendEmail_Order(user.email,user)
+    // const products=form.products
+    res.status(200).send('Success');
 })
 
 
