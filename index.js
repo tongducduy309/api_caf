@@ -194,8 +194,16 @@ router.get('/get/address-of-user/:uid', (req, res) => {
             res.status(500).json({result:'Failed'});
         } else {
             const address = results.rows
-            address['result']='Success'
-            res.status(200).json(address);
+            for (let a of address){
+                if (a.uid==uid){
+                    a['default']=true
+                }
+                else a['default']=false
+            }
+            // address['result']='Success'
+            
+            
+            res.status(200).json({rows:address,result:'success'});
         }
     });
 })
