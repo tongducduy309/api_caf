@@ -234,18 +234,31 @@ router.get('/get/address-of-user/:uid', (req, res) => {
     });
 })
 
-router.post('/post/users/address', (req, res) => {
+router.post('/post/address-of-user', (req, res) => {
     const form = req.body;
     const uid=form.uid
     const receiver=form.receiver
-    const contactNumber=form.contactnumber
+    const contactnumber=form.contactnumber
     const address=form.address
-    pool.query(`Select Add_Address(${uid}, '${receiver}', '${contactNumber}', '${address}')`, (error, results) => {
+    pool.query(`Select Add_Address(${uid}, '${receiver}', '${contactnumber}', '${address}')`, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).json({result:'Error: '+error});
         } else {
             res.status(200).json({rows:results.rows[0].add_address,result:'success'});
+        }
+    });
+})
+
+router.post('/delete/address-of-user/:aid', (req, res) => {
+    const form = req.params;
+    const aid=form.aid
+    pool.query(`DELETE FROM ADDRESS_OF_USER WHERE id='${aid}'`, (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).json({result:'Error: '+error});
+        } else {
+            res.status(200).json({result:'success'});
         }
     });
 })
