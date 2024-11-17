@@ -238,7 +238,7 @@ router.post('/post/users/address', (req, res) => {
     const form = req.body;
     const uid=form.uid
     const receiver=form.receiver
-    const contactNumber=form.contactNumber
+    const contactNumber=form.contactnumber
     const address=form.address
     pool.query(`Select Add_Address(${uid}, '${receiver}', '${contactNumber}', '${address}')`, (error, results) => {
         if (error) {
