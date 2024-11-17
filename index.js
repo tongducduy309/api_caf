@@ -214,7 +214,7 @@ router.get('/get/users/:email/:password', (req, res) => {
 
 router.get('/get/address-of-user/:uid', (req, res) => {
     const uid = req.params.uid;
-    pool.query(`SELECT * FROM address WHERE uid='${uid}'`, (error, results) => {
+    pool.query(`SELECT * FROM address_of_user WHERE uid='${uid}'`, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).json({result:'Failed'});
@@ -240,13 +240,12 @@ router.post('/post/users/address', (req, res) => {
     const receiver=form.receiver
     const contactNumber=form.contactNumber
     const address=form.address
-    pool.query(`INSERT INTO Address (uid,receiver, contactNumber,address) VALUES
-    ('${uid}', '${receiver}', '${contactNumber}', '${address}')`, (error, results) => {
+    pool.query(`Select Add_Address(${uid}, '${receiver}', '${contactNumber}', '${address}')`, (error, results) => {
         if (error) {
             console.error(error);
-            res.status(500).send('Error: Insert Into');
+            res.status(500).json({result:'Error: '+error});
         } else {
-            res.status(200).send('Success');
+            res.status(200).json({rows:results.rows[0].add_address,result:'success'});
         }
     });
 })
