@@ -144,6 +144,26 @@ async function sendEmail_Order(email_to,user) {
 
     console.log("Message sent: %s", info.messageId)
 }
+
+async function sendEmail_ResetYourPassword(email_to,fullname,token) {
+    
+    const source = fs.readFileSync(path.join(__dirname, 'template', 'reset_your_password.html'), 'utf-8').toString();
+    const template = handlebars.compile(source);
+    const replacements = {
+    fullname:fullname,
+    token:token
+    }; 
+    const htmlToSend = template (replacements)
+    const info = await transporter.sendMail({
+        from: '"COFFEE STORE" <kdk2003.sgu@gmail.com>', 
+        to: email_to,
+        subject: "Đặt Lại Mật Khẩu", 
+        text: "Đặt Lại Mật Khẩu", 
+        html:htmlToSend,
+    });
+
+    console.log("Message sent: %s", info.messageId)
+}
 // const pool = new pg.Pool({
 //     host:process.env.DB_HOST,
 //     port:process.env.DB_PORT,
@@ -157,6 +177,23 @@ const pool = new pg.Pool({
   })
 
 // const db =pool.connect();
+
+// ==========================Admin================================
+router.get('/get/sf/:token', (req, res) => {
+    const token = req.params.token;
+    pool.query(`SELECT id,role FROM USERS WHERE token='${token}'`, (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).json({result:'Failed'});
+        } else {
+            if (results.rowCount==0)
+                return res.status(200).json({result:'Not Exist'});
+            const user = results.rows[0]
+            user['result']='Success'
+            res.status(200).json(user);
+        }
+    });
+})
 
 // ==========================USER================================
 router.get('/get/users/:token', (req, res) => {
@@ -234,6 +271,21 @@ router.get('/get/address-of-user/:uid', (req, res) => {
     });
 })
 
+router.get('/get/rest-your/:email', (req, res) => {
+    const email = req.params.email;
+    pool.query(`SELECT * FROM USERS WHERE email='${email}'`, (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).json({result:'failed'});
+        } else {
+            const address = results.rows
+            
+            
+            res.status(200).json({rows:address,result:'success'});
+        }
+    });
+})
+
 router.post('/post/address-of-user', (req, res) => {
     const form = req.body;
     const uid=form.uid
@@ -259,6 +311,19 @@ router.post('/delete/address-of-user/:aid', (req, res) => {
             res.status(500).json({result:'Error: '+error});
         } else {
             res.status(200).json({result:'success'});
+        }
+    });
+})
+
+router.put('/put/address-of-user', (req, res) => {
+    const address = req.body
+    pool.query(`UPDATE address_of_user SET receiver = '${address.receiver}',contactnumber = '${address.contactnumber}',address = '${address.address}' WHERE id='${address.id}'`, (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).send('Error',error);
+        } else {
+
+            return res.status(200).json({result:(results.rowCount==1)?'Success':'Failed'})
         }
     });
 })
@@ -427,7 +492,7 @@ router.post('/post/customer-reviews', (req, res) => {
             console.error(error);
             res.status(500).send('Error: Insert Into');
         } else {
-            res.status(200).send('Success');
+            res.status(200).send('success');
         }
     });
 })
@@ -488,7 +553,7 @@ router.post('/post/categories', (req, res) => {
             console.error(error);
             res.status(500).send('Error: Insert Into');
         } else {
-            res.status(200).send('Success');
+            res.status(200).send('success');
         }
     });
 })
@@ -502,7 +567,39 @@ router.post('/post/checkout', async (req, res) => {
     const user=form.user
     await sendEmail_Order(user.email,user)
     // const products=form.products
-    res.status(200).send('Success');
+    res.status(200).send('success');
+})
+
+// ==========================CART================================
+router.get('/get/cart/:uid', (req, res) => {
+    const uid = req.params.uid
+    pool.query(`SELECT PRODUCTS.*,c.note,c.quantity FROM (SELECT * FROM CART WHERE uid='${uid}') AS c
+        LEFT JOIN PRODUCTS ON c.pid=PRODUCTS.id`, (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).json({result:'Failed'});
+        } else {
+            const rows = results.rows[0]
+            res.status(200).json({rows:rows,result:'success'});
+        }
+    });
+})
+
+router.post('/post/cart', async (req, res) => {
+    const form = req.body;
+    const uid=form.uid
+    const pid=form.pid
+    const quantity=form.quantity
+    const note=form.note
+    pool.query(`INSERT INTO CART(uid,pid,quantity,note) VALUES
+    ('${uid}', '${pid}', '${quantity}', '${note}')`, (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).send('Error: Insert Into');
+        } else {
+            res.status(200).send('success');
+        }
+    });
 })
 
 
