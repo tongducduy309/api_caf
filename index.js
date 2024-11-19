@@ -614,6 +614,20 @@ router.post('/delete/cart/:id', (req, res) => {
     });
 })
 
+router.put('/put/cart', (req, res) => {
+    const item = req.body
+
+    pool.query(`UPDATE address_of_user SET quantity = '${item.quantity}' WHERE id='${item.id}'`, (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).send('Error',error);
+        } else {
+
+            return res.status(200).json({result:(results.rowCount==1)?'Success':'Failed'})
+        }
+    });
+})
+
 
 
 app.get('/', (req, res) => {
