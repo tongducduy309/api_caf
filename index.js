@@ -590,13 +590,13 @@ router.post('/post/cart', async (req, res) => {
     const pid=form.pid
     const quantity=form.quantity
     const note=form.note
-    pool.query(`INSERT INTO CART(uid,pid,quantity,note) VALUES
-    ('${uid}', '${pid}', '${quantity}', '${note}')`, (error, results) => {
+
+    pool.query(`Select Add_To_Cart('${uid}', '${pid}', '${quantity}', '${note}')`, (error, results) => {
         if (error) {
             console.error(error);
-            res.status(500).send('Error: Insert Into');
+            res.status(500).json({result:'Error: '+error});
         } else {
-            res.status(200).send('success');
+            res.status(200).json({rows:results.rows[0].add_to_cart,result:'success'});
         }
     });
 })
