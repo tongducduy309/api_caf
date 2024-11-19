@@ -601,6 +601,18 @@ router.post('/post/cart', async (req, res) => {
     });
 })
 
+router.post('/delete/cart/:id', (req, res) => {
+    const form = req.params;
+    const id=form.id
+    pool.query(`DELETE FROM cart WHERE id='${id}'`, (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).json({result:'Error: '+error});
+        } else {
+            res.status(200).json({result:'success'});
+        }
+    });
+})
 
 
 
