@@ -579,8 +579,7 @@ router.get('/get/cart/:uid', (req, res) => {
             console.error(error);
             res.status(500).json({result:'Failed'});
         } else {
-            const rows = results.rows[0]
-            res.status(200).json({rows:rows,result:'success'});
+            res.status(200).json({rows:results.rows,result:'success'});
         }
     });
 })
