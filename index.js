@@ -302,7 +302,7 @@ router.post('/post/address-of-user', (req, res) => {
     });
 })
 
-router.post('/delete/address-of-user/:aid', (req, res) => {
+router.delete('/delete/address-of-user/:aid', (req, res) => {
     const form = req.params;
     const aid=form.aid
     pool.query(`DELETE FROM ADDRESS_OF_USER WHERE id='${aid}'`, (error, results) => {
@@ -601,7 +601,7 @@ router.post('/post/cart', async (req, res) => {
     });
 })
 
-router.post('/delete/cart/:id', (req, res) => {
+router.delete('/delete/cart/:id', (req, res) => {
     const form = req.params;
     const id=form.id
     pool.query(`DELETE FROM cart WHERE id='${id}'`, (error, results) => {
