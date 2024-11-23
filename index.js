@@ -573,7 +573,7 @@ router.post('/post/checkout', async (req, res) => {
 // ==========================CART================================
 router.get('/get/cart/:uid', (req, res) => {
     const uid = req.params.uid
-    pool.query(`SELECT PRODUCTS.*,c.note,c.quantity FROM (SELECT * FROM CART WHERE uid='${uid}') AS c
+    pool.query(`SELECT PRODUCTS.name,PRODUCTS.cost,PRODUCTS.sale,PRODUCTS.datesale_to,PRODUCTS.datesale_from,PRODUCTS.size,PRODUCTS.shelf_status,c.pid,c.note,c.quantity FROM (SELECT * FROM CART WHERE uid='${uid}') AS c
         LEFT JOIN PRODUCTS ON c.pid=PRODUCTS.id`, (error, results) => {
         if (error) {
             console.error(error);
