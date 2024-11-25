@@ -462,12 +462,22 @@ router.post('/post/products', (req, res) => {
     const form = req.body;
     const name=form.name
     const name_id = generateId(name)
-    const size=form.size
-    const cost=form.cost
+    const listsize = form.listsize
+    // const size=form.size
+    // const cost=form.cost
     const cid=form.cid
+    const description=form.description
+    const shelf_status=form.shelf_status
+    const img=form.img
+
+    let data = ''
+    for (let s of listsize){
+        data+=`('${name_id}', '${name}', '${s.size}', '${s.cost}', '${cid}' , '${img}', '${description}', '${shelf_status}'),`
+    }
+    data = data.slice(0, -1);
     // const sale=form.sale
-    pool.query(`INSERT INTO PRODUCTS (name_id,name, size,cost,cid) VALUES
-    ('${name_id}', '${name}', '${size}', '${cost}', '${cid}')`, (error, results) => {
+    pool.query(`INSERT INTO PRODUCTS (name_id,name, size,cost,cid,img,description,shelf_status) VALUES
+    ${data}`, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).send('Error: Insert Into');
