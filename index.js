@@ -472,7 +472,7 @@ router.post('/post/products', (req, res) => {
 
     let data = ''
     for (let s of listsize){
-        data+=`('${name_id}', '${name}', '${s.size}', '${parseInt(s.cost)}', '${cid}' , '${description}', '${shelf_status?1:0}'),`
+        data+=`('${name_id}', '${name}', '${s.size}', '${parseInt(s.cost)}', '${cid}' , '${description}', '${shelf_status}'),`
     }
     data = data.slice(0, -1);
     // const sale=form.sale
@@ -482,7 +482,7 @@ router.post('/post/products', (req, res) => {
             console.error(error);
             res.status(500).send('Error: Insert Into');
         } else {
-            res.status(200).send('Success');
+            res.status(200).json(results);
         }
     });
 })
