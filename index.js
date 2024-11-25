@@ -472,11 +472,11 @@ router.post('/post/products', (req, res) => {
 
     let data = ''
     for (let s of listsize){
-        data+=`('${name_id}', '${name}', '${s.size}', '${s.cost}', '${cid}' , '${img}', '${description}', '${shelf_status}'),`
+        data+=`('${name_id}', '${name}', '${s.size}', '${s.cost}', '${cid}' , '${description}', '${shelf_status}'),`
     }
     data = data.slice(0, -1);
     // const sale=form.sale
-    pool.query(`INSERT INTO PRODUCTS (name_id,name, size,cost,cid,img,description,shelf_status) VALUES
+    pool.query(`INSERT INTO PRODUCTS (name_id,name, size,cost,cid,description,shelf_status) VALUES
     ${data}`, (error, results) => {
         if (error) {
             console.error(error);
