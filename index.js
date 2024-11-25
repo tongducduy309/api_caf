@@ -477,7 +477,7 @@ router.post('/post/products', (req, res) => {
     data = data.slice(0, -1);
     // const sale=form.sale
     pool.query(`INSERT INTO PRODUCTS (name_id,name, size,cost,cid,description,shelf_status) VALUES
-    ${data}`, (error, results) => {
+    ${data}; INSERT INTO IMG_PRODUCT(img,p_name_id) VALUES ('${img}','${name_id}')`, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).send('Error: Insert Into');
