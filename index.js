@@ -563,8 +563,8 @@ router.post("/post/products", (req, res) => {
 router.delete('/delete/products/:name_id/:img', async (req, res) => {
     const form = req.params;
     const name_id=form.name_id
-    const img=form.img.replaceAll("$$","/")
-    res.status(400).send(img)
+    const img=form.img.replaceAll("$$$","/")
+
     try {
         const bucket = admin.storage().bucket();
         const file = bucket.file(img);
