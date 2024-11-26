@@ -55,17 +55,17 @@ function group(rows){
             products[row.name].id.push(row.id)
             products[row.name].size.push(row.size)
             products[row.name].cost.push(row.cost)
-            // products[row.name].sale.push(row.sale)
-            // products[row.name].datesale_from.push(row.datesale_from)
-            // products[row.name].datesale_to.push(row.datesale_to)
+            products[row.name].sale.push(row.sale)
+            products[row.name].datesale_from.push(row.datesale_from)
+            products[row.name].datesale_to.push(row.datesale_to)
         }
         else{
             row.id = [row.id]
             row.size = [row.size]
             row.cost = [row.cost]
-            // row.sale = [row.sale]
-            // row.datesale_from = [row.datesale_from]
-            // row.datesale_to = [row.datesale_to]
+            row.sale = [row.sale]
+            row.datesale_from = [row.datesale_from]
+            row.datesale_to = [row.datesale_to]
             products[row.name] = {...row}
         }
     })
