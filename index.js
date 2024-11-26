@@ -566,10 +566,15 @@ router.delete('/delete/products/:name_id/:img', async (req, res) => {
     const img=form.img.replaceAll("$$$","/")
 
     try {
-        const bucket = admin.storage().bucket();
-        const file = bucket.file(img);
-        await file.delete();
-        console.log('Image deleted successfully!');
+        const bucket = storage.bucket("gs://newapp-a6378.appspot.com");
+        bucket.file(img).delete()
+        .then(() => {
+            console.log('File deleted successfully.');
+        })
+        .catch((error) => {
+            console.error('Error deleting file:', error);
+            return res.status(500).json({result:'Error: '+error});
+        });
     } catch (error) {
         return res.status(500).json({result:'Error: '+error});
     }
