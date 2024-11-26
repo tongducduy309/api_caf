@@ -563,7 +563,7 @@ router.post("/post/products", (req, res) => {
 router.delete('/delete/products/:name_id/:img', async (req, res) => {
     const form = req.params;
     const name_id=form.name_id
-    const img=form.img.replaceAll("$$$","/")
+    const img=form.img.replaceAll("$$","/")
 
     try {
         const bucket = storage.bucket("gs://newapp-a6378.appspot.com");
