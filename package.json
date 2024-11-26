@@ -10,13 +10,18 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@google-cloud/storage": "^7.14.0",
     "argon2": "^0.41.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.0",
+    "firebase-admin": "^13.0.1",
+    "firebase-functions": "^6.1.1",
+    "formidable-serverless": "^1.1.1",
     "handlebars": "^4.7.8",
     "jsonwebtoken": "^9.0.2",
     "nodemailer": "^6.9.15",
-    "pg": "^8.13.0"
+    "pg": "^8.13.0",
+    "uuid-v4": "^0.1.0"
   }
 }

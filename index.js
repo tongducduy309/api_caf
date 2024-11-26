@@ -10,6 +10,20 @@ const jwt = require('jsonwebtoken');
 // const { verify } = require('crypto');
 const path = require('path');
 const argon2 = require('argon2');
+const { Storage } = require("@google-cloud/storage");
+const formidable = require("formidable-serverless");
+var admin = require("firebase-admin");
+const UUID = require("uuid-v4");
+var serviceAccount = require("./key/newapp-a6378-firebase-adminsdk-zuy4c-1478977781.json");
+
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount)
+  });
+
+
+const storage = new Storage({
+keyFilename: "./key/newapp-a6378-firebase-adminsdk-zuy4c-1478977781.json",
+});
 
 
 
@@ -41,17 +55,17 @@ function group(rows){
             products[row.name].id.push(row.id)
             products[row.name].size.push(row.size)
             products[row.name].cost.push(row.cost)
-            products[row.name].sale.push(row.sale)
-            products[row.name].datesale_from.push(row.datesale_from)
-            products[row.name].datesale_to.push(row.datesale_to)
+            // products[row.name].sale.push(row.sale)
+            // products[row.name].datesale_from.push(row.datesale_from)
+            // products[row.name].datesale_to.push(row.datesale_to)
         }
         else{
             row.id = [row.id]
             row.size = [row.size]
             row.cost = [row.cost]
-            row.sale = [row.sale]
-            row.datesale_from = [row.datesale_from]
-            row.datesale_to = [row.datesale_to]
+            // row.sale = [row.sale]
+            // row.datesale_from = [row.datesale_from]
+            // row.datesale_to = [row.datesale_to]
             products[row.name] = {...row}
         }
     })
@@ -400,7 +414,7 @@ router.put('/put/users/changeName', (req, res) => {
 
 // ==========================PRODUCT================================
 router.get('/get/products/all', (req, res) => {
-    pool.query(`SELECT products.*,CATEGORIES.name AS c_name,CATEGORIES.type AS c_type FROM PRODUCTS LEFT JOIN CATEGORIES ON PRODUCTS.cid=CATEGORIES.id`, (error, results) => {
+    pool.query(`SELECT products.*,CATEGORIES.name AS c_name,CATEGORIES.type AS c_type FROM (SELECT PRODUCTS.*,IMG_PRODUCT.img FROM PRODUCTS LEFT JOIN IMG_PRODUCT ON PRODUCTS.name_id=IMG_PRODUCT.p_name_id) AS PRODUCTS LEFT JOIN CATEGORIES ON PRODUCTS.cid=CATEGORIES.id`, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).send('Error',error);
@@ -414,7 +428,8 @@ router.get('/get/products/:key', (req, res) => {
     let key_name = req.params.key
     let key = removeVietnameseTones(req.params.key);
     if (key!='all'){
-        pool.query(`SELECT * FROM PRODUCTS WHERE LOWER(name) LIKE '%${key_name}%' OR LOWER(name_id) LIKE '%${key}%'`, (error, results) => {
+        pool.query(`SELECT P.*,IMG_PRODUCT.img FROM (SELECT * FROM PRODUCTS WHERE LOWER(name) LIKE '%${key_name}%' OR LOWER(name_id) LIKE '%${key}%') as P LEFT JOIN IMG_PRODUCT ON P.name_id=IMG_PRODUCT.p_name_id
+            `, (error, results) => {
             if (error) {
                 console.error(error);
                 res.status(500).send('Error',error);
@@ -444,8 +459,9 @@ router.get('/get/all-products/:name_id_category', (req, res) => {
     if (!name_id_category||name_id_category.trim()==''){
         return res.status(400).send('Failed');
     }
-    pool.query(`SELECT PRODUCTS.* FROM PRODUCTS,(SELECT id FROM CATEGORIES WHERE name_id='${name_id_category}') AS c
-        WHERE c.id=PRODUCTS.cid`, (error, results) => {
+    pool.query(`
+        SELECT PRODUCTS.*,IMG_PRODUCT.img FROM (SELECT PRODUCTS.* FROM PRODUCTS,(SELECT id FROM CATEGORIES WHERE name_id='${name_id_category}') AS c
+        WHERE c.id=PRODUCTS.cid) as PRODUCTS LEFT JOIN IMG_PRODUCT ON PRODUCTS.name_id=IMG_PRODUCT.p_name_id`, (error, results) => {
             // AND PRODUCTS.shelf_status=1
         if (error) {
             console.error(error);
@@ -457,35 +473,97 @@ router.get('/get/all-products/:name_id_category', (req, res) => {
     });
 })
 
-router.post('/post/products', (req, res) => {
-    //(name,size,cost,cid) 
-    const form = req.body;
-    const name=form.name
-    const name_id = generateId(name)
-    const listsize = form.listsize
-    // const size=form.size
-    // const cost=form.cost
-    const cid=form.cid
-    const description=form.description
-    const shelf_status=form.shelf_status
-    const img=form.img
+router.post("/post/products", (req, res) => {
+    const form = new formidable.IncomingForm({ multiples: true });
+  
+    try {
+      form.parse(req, async (err, fields, files) => {
+        let uuid = UUID();
+        var downLoadPath =
+          "https://firebasestorage.googleapis.com/v0/b/newapp-a6378.appspot.com/o/";
+  
+        const img = files.img;
+        const name=fields.name
+        const name_id = generateId(name)
+        const listsize = JSON.parse(fields.listsize)
+        // const size=fields.size
+        // const cost=fields.cost
+        const cid=fields.cid
+        const description=fields.description
+        const shelf_status=fields.shelf_status
+        
 
-    let data = ''
-    for (let s of listsize){
-        data+=`('${name_id}', '${name}', '${s.size}', '${parseInt(s.cost)}', '${cid}' , '${description}', '${shelf_status}'),`
-    }
-    data = data.slice(0, -1);
-    // const sale=form.sale
-    pool.query(`INSERT INTO PRODUCTS (name_id,name, size,cost,cid,description,shelf_status) VALUES
-    ${data}; INSERT INTO IMG_PRODUCT(img,p_name_id) VALUES ('${img}','${name_id}')`, (error, results) => {
-        if (error) {
-            console.error(error);
-            res.status(500).send('Error: Insert Into');
+        
+  
+        // url of the uploaded image
+        let imageUrl;
+  
+        const bucket = storage.bucket("gs://newapp-a6378.appspot.com");
+  
+        if (img.size == 0) {
+          // do nothing
         } else {
-            res.status(200).json(results);
+          const imageResponse = await bucket.upload(img.path, {
+            destination: `Product/${img.name}`,
+            resumable: true,
+            metadata: {
+                metadata: {
+                  firebaseStorageDownloadTokens: uuid,
+                },
+              },
+          });
+          // profile image url
+          imageUrl =
+            downLoadPath +
+            encodeURIComponent(imageResponse[0].name) +
+            "?alt=media&token=" +
+          uuid;
+          let data = ''
+        for (let s of listsize){
+            data+=`('${name_id}', '${name}', '${s.size}', '${parseInt(s.cost)}', '${cid}' , '${description}', '${shelf_status}'),`
         }
-    });
-})
+        data = data.slice(0, -1);
+        // console.log(data);
+        // const sale=form.sale
+        pool.query(`INSERT INTO PRODUCTS (name_id,name, size,cost,cid,description,shelf_status) VALUES
+        ${data} ; INSERT INTO IMG_PRODUCT(img,p_name_id) VALUES ('${imageUrl}','${name_id}')`, (error, results) => {
+            if (error) {
+                console.error(error);
+                return res.status(500).send('Error: Insert Into');
+            } 
+            else{
+                res.status(200).send("Success")
+            }
+        });
+            // res.send(imageUrl)
+        }
+
+        res.status(400)
+        // object to send to database
+        // const userModel = {
+        //   id: docID,
+        //   name: fields.name,
+        //   email: fields.email,
+        //   age: fields.age,
+        //   img: img.size == 0 ? "" : imageUrl,
+        // };
+  
+        
+      });
+    } catch (err) {
+      res.send({
+        message: "Something went wrong",
+        data: {},
+        error: err,
+      });
+    }
+});
+
+// router.post('/post/products', (req, res) => {
+//     //(name,size,cost,cid) 
+//     const form = req.body;
+    
+// })
 
 // ==========================CUSTOMER-REVIEWS================================
 router.post('/post/customer-reviews', (req, res) => {
@@ -637,6 +715,11 @@ router.put('/put/cart', (req, res) => {
         }
     });
 })
+
+
+
+
+
 
 
 
