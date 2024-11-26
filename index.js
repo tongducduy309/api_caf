@@ -569,7 +569,6 @@ router.delete('/delete/products/:name_id/:img', async (req, res) => {
         const bucket = storage.bucket("gs://newapp-a6378.appspot.com");
         
         const filePath = img.split('?')[0].split('/b/')[1].split('/o/')[1];
-        res.send(filePath)
         bucket.file(filePath).delete()
         .then(() => {
             console.log('File deleted successfully.');
