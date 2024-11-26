@@ -502,6 +502,7 @@ router.post("/post/products", (req, res) => {
   
         if (img.size == 0) {
           // do nothing
+          res.status(400)
         } else {
           const imageResponse = await bucket.upload(img.path, {
             destination: `Product/${img.name}`,
@@ -532,13 +533,13 @@ router.post("/post/products", (req, res) => {
                 return res.status(500).send('Error: Insert Into');
             } 
             else{
-                res.status(200).send("Success")
+                return res.status(200).json({result:"success"})
             }
         });
             // res.send(imageUrl)
         }
 
-        res.status(400)
+        
         // object to send to database
         // const userModel = {
         //   id: docID,
