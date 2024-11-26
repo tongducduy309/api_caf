@@ -560,6 +560,31 @@ router.post("/post/products", (req, res) => {
     }
 });
 
+router.delete('/delete/products/:name_id/:img', async (req, res) => {
+    const form = req.params;
+    const name_id=form.name_id
+    const img=form.img
+
+    try {
+        const bucket = admin.storage().bucket();
+        const file = bucket.file(img);
+        await file.delete();
+        console.log('Image deleted successfully!');
+    } catch (error) {
+        return res.status(500).json({result:'Error: '+error});
+    }
+    pool.query(`DELETE FROM Products WHERE name_id='${name_id}' ; DELETE FROM IMG_PRODUCT WHERE p_name_id='${name_id}'`, (error, results) => {
+        if (error) {
+            console.error(error);
+            return res.status(500).json({result:'Error: '+error});
+        } else {
+            res.status(200).json({result:'success'});
+        }
+    });
+
+
+})
+
 // router.post('/post/products', (req, res) => {
 //     //(name,size,cost,cid) 
 //     const form = req.body;
