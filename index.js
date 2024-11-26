@@ -638,6 +638,40 @@ router.put('/put/cart', (req, res) => {
     });
 })
 
+const multer = require('multer');
+const { Storage } = require('@google-cloud/storage');
+
+const storage = new Storage({
+  projectId: 'newapp-a6378',
+  keyFilename: path.join(__dirname, 'key', 'newapp-a6378-firebase-adminsdk-zuy4c-1478977781.json')
+});
+
+const bucket = storage.bucket('Product');
+
+const upload = multer({ dest: 'uploads/' });
+
+app.post('/upload', upload.single('image'), async (req, res) => {
+  const file = req.file;
+
+  const blob = bucket.file(file.originalname);
+  const blobStream = blob.createWriteStream({
+    resumable:   
+ false
+  });
+
+  blobStream.on('error', (err) => {
+    console.error('Error uploading file:', err);
+    res.status(500).send('Error uploading file');
+  });
+
+  blobStream.on('finish', () => {
+    const publicUrl = `https://storage.googleapis.com/${bucket.name}/${file.originalname}`;
+    res.send({ publicUrl });
+  });
+
+  blobStream.end(file.buffer);
+});
+
 
 
 app.get('/', (req, res) => {
