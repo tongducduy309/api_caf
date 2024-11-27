@@ -165,7 +165,8 @@ async function sendEmail_ResetYourPassword(email_to,fullname,token) {
     const template = handlebars.compile(source);
     const replacements = {
     fullname:fullname,
-    token:token
+    token:token,
+    email:email_to
     }; 
     const htmlToSend = template (replacements)
     const info = await transporter.sendMail({
@@ -285,17 +286,19 @@ router.get('/get/address-of-user/:uid', (req, res) => {
     });
 })
 
-router.get('/get/rest-your/:email', (req, res) => {
+router.get('/get/reset-your-password/:email', (req, res) => {
     const email = req.params.email;
-    pool.query(`SELECT * FROM USERS WHERE email='${email}'`, (error, results) => {
+    pool.query(`SELECT * FROM USERS WHERE email='${email}'`, async (error, results) => {
         if (error) {
             console.error(error);
-            res.status(500).json({result:'failed'});
+            return res.status(500).json({result:'failed'});
         } else {
-            const address = results.rows
             
-            
-            res.status(200).json({rows:address,result:'success'});
+            if (results.rows.length==0)
+                return res.status(200).json({result:'Not Exist'});
+            const user = results.rows[0]
+            await sendEmail_ResetYourPassword(email,user.fullname,user.token)
+            res.status(200).json({result:'success'});
         }
     });
 })
@@ -325,6 +328,27 @@ router.delete('/delete/address-of-user/:aid', (req, res) => {
             res.status(500).json({result:'Error: '+error});
         } else {
             res.status(200).json({result:'success'});
+        }
+    });
+})
+
+router.put('/put/users/password', (req, res) => {
+    const user = req.body
+    const email = user.email
+    const password = user.password
+    const token = user.token
+    const token_new = generateToken(
+        { 
+            email: email,
+            password: password 
+        });
+    pool.query(`UPDATE USERS SET password = '${password}', token = '${token_new}' WHERE token='${token}'`, (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).send('Error',error);
+        } else {
+
+            return res.status(200).json({result:(results.rowCount==1)?'success':'failed'})
         }
     });
 })
