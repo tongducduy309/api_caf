@@ -332,10 +332,23 @@ router.delete('/delete/address-of-user/:aid', (req, res) => {
     });
 })
 
-router.put('/put/users/password', (req, res) => {
+router.put('/put/address-of-user', (req, res) => {
+    const address = req.body
+    pool.query(`UPDATE address_of_user SET receiver = '${address.receiver}',contactnumber = '${address.contactnumber}',address = '${address.address}' WHERE id='${address.id}'`, (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).send('Error',error);
+        } else {
+
+            return res.status(200).json({result:(results.rowCount==1)?'Success':'Failed'})
+        }
+    });
+})
+
+router.put('/put/users/password', async (req, res) => {
     const user = req.body
     const email = user.email
-    const password = user.password
+    const password=await argon2.hash(user.password);
     const token = user.token
     const token_new = generateToken(
         { 
@@ -349,19 +362,6 @@ router.put('/put/users/password', (req, res) => {
         } else {
 
             return res.status(200).json({result:(results.rowCount==1)?'success':'failed'})
-        }
-    });
-})
-
-router.put('/put/address-of-user', (req, res) => {
-    const address = req.body
-    pool.query(`UPDATE address_of_user SET receiver = '${address.receiver}',contactnumber = '${address.contactnumber}',address = '${address.address}' WHERE id='${address.id}'`, (error, results) => {
-        if (error) {
-            console.error(error);
-            res.status(500).send('Error',error);
-        } else {
-
-            return res.status(200).json({result:(results.rowCount==1)?'Success':'Failed'})
         }
     });
 })
