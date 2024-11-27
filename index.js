@@ -358,7 +358,7 @@ router.put('/put/users/password', async (req, res) => {
     pool.query(`UPDATE USERS SET password = '${password}', token = '${token_new}' WHERE token='${token}'`, (error, results) => {
         if (error) {
             console.error(error);
-            res.status(500).send('Error',error);
+            res.status(500).json({result:error});
         } else {
 
             return res.status(200).json({result:(results.rowCount==1)?'success':'failed'})
