@@ -450,17 +450,17 @@ router.get('/get/products/all', (req, res) => {
 
 router.get('/get/products-by-customer-reviews/:number', (req, res) => {
     const number = req.params.number
-    let query = `SELECT PRODUCTS.*,CS.point FROM (SELECT PRODUCTS.*, FS.SALE, FS.DATESALE_FROM,FS.DATESALE_TO FROM (SELECT products.*,CATEGORIES.name AS c_name,CATEGORIES.type AS c_type FROM (SELECT PRODUCTS.*,IMG_PRODUCT.img FROM PRODUCTS LEFT JOIN IMG_PRODUCT ON PRODUCTS.name_id=IMG_PRODUCT.p_name_id) AS PRODUCTS LEFT JOIN CATEGORIES ON PRODUCTS.cid=CATEGORIES.id) AS PRODUCTS LEFT JOIN (SELECT * FROM FLASH_SALES WHERE NOW()>= DATESALE_FROM AND NOW()<=DATESALE_TO) AS FS ON FS.pid=PRODUCTS.id) AS PRODUCTS LEFT JOIN (select name_id,AVG(point) AS point from CUSTOMER_REVIEWS GROUP BY name_id) AS CS ON CS.name_id=PRODUCTS.name_id 
-ORDER BY CS.point ASC LIMIT ${number}`
-    if (number=='all')
-        query = `SELECT PRODUCTS.*,CS.point FROM (SELECT PRODUCTS.*, FS.SALE, FS.DATESALE_FROM,FS.DATESALE_TO FROM (SELECT products.*,CATEGORIES.name AS c_name,CATEGORIES.type AS c_type FROM (SELECT PRODUCTS.*,IMG_PRODUCT.img FROM PRODUCTS LEFT JOIN IMG_PRODUCT ON PRODUCTS.name_id=IMG_PRODUCT.p_name_id) AS PRODUCTS LEFT JOIN CATEGORIES ON PRODUCTS.cid=CATEGORIES.id) AS PRODUCTS LEFT JOIN (SELECT * FROM FLASH_SALES WHERE NOW()>= DATESALE_FROM AND NOW()<=DATESALE_TO) AS FS ON FS.pid=PRODUCTS.id) AS PRODUCTS LEFT JOIN (select name_id,AVG(point) AS point from CUSTOMER_REVIEWS GROUP BY name_id) AS CS ON CS.name_id=PRODUCTS.name_id 
+    query = `SELECT PRODUCTS.*,CS.point FROM (SELECT PRODUCTS.*, FS.SALE, FS.DATESALE_FROM,FS.DATESALE_TO FROM (SELECT products.*,CATEGORIES.name AS c_name,CATEGORIES.type AS c_type FROM (SELECT PRODUCTS.*,IMG_PRODUCT.img FROM PRODUCTS LEFT JOIN IMG_PRODUCT ON PRODUCTS.name_id=IMG_PRODUCT.p_name_id) AS PRODUCTS LEFT JOIN CATEGORIES ON PRODUCTS.cid=CATEGORIES.id) AS PRODUCTS LEFT JOIN (SELECT * FROM FLASH_SALES WHERE NOW()>= DATESALE_FROM AND NOW()<=DATESALE_TO) AS FS ON FS.pid=PRODUCTS.id) AS PRODUCTS LEFT JOIN (select name_id,AVG(point) AS point from CUSTOMER_REVIEWS GROUP BY name_id) AS CS ON CS.name_id=PRODUCTS.name_id 
 ORDER BY CS.point ASC`
     pool.query(query, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).send('Error',error);
         } else {
-            res.status(200).json(group(results.rows));
+            if (number=='all')
+                res.status(200).json(group(results.rows));
+            else
+            res.status(200).json(group(results.rows).slice(0,number));
         }
     });
 })
