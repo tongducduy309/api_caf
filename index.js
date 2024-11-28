@@ -342,10 +342,10 @@ router.put('/put/address-of-user', (req, res) => {
     pool.query(`UPDATE address_of_user SET receiver = '${address.receiver}',contactnumber = '${address.contactnumber}',address = '${address.address}' WHERE id='${address.id}'` + query, (error, results) => {
         if (error) {
             console.error(error);
-            res.status(500).send('Error',error);
+            res.status(500).json({result:'error'});
         } else {
 
-            return res.status(200).json({result:(results.rowCount==1)?'success':'failed',r:results})
+            return res.status(200).json({result:'success'})
         }
     });
 })
