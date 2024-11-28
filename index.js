@@ -668,13 +668,12 @@ router.post('/post/flash-sales', async (req, res) => {
 // ==========================CUSTOMER-REVIEWS================================
 router.post('/post/customer-reviews', (req, res) => {
     const form = req.body;
-    const pid=form.pid
     const point=form.point
     const name=form.name
     const email=form.email
     const comment=form.comment
     const name_id=form.name_id
-    pool.query(`INSERT INTO CUSTOMER_REVIEWS (name_id,pid,point,name, email,comment) VALUES
+    pool.query(`INSERT INTO CUSTOMER_REVIEWS (name_id,point,name, email,comment) VALUES
     ('${name_id}','${pid}', '${point}', '${name}', '${email}', '${comment}')`, (error, results) => {
         if (error) {
             console.error(error);
