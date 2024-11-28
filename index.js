@@ -345,7 +345,7 @@ router.put('/put/address-of-user', (req, res) => {
             res.status(500).send('Error',error);
         } else {
 
-            return res.status(200).json({result:(results.rowCount==1)?'success':'failed'})
+            return res.status(200).json({result:(results.rowCount==1)?'success':'failed',r:results})
         }
     });
 })
