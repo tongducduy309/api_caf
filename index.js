@@ -472,7 +472,7 @@ router.get('/get/flash-sales/all', (req, res) => {
             res.status(500).send('Error',error);
         } else {
             
-            res.status(200).json(group(results.rows));
+            res.status(200).json(results.rows);
         }
     });
 })
