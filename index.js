@@ -335,7 +335,11 @@ router.delete('/delete/address-of-user/:aid', (req, res) => {
 
 router.put('/put/address-of-user', (req, res) => {
     const address = req.body
-    pool.query(`UPDATE address_of_user SET receiver = '${address.receiver}',contactnumber = '${address.contactnumber}',address = '${address.address}' WHERE id='${address.id}'`, (error, results) => {
+    let query = ''
+    if (address.default){
+        query = ` ; UPDATE USERS SET id_address_default=${address.id} WHERE uid = ${address.uid}`
+    }
+    pool.query(`UPDATE address_of_user SET receiver = '${address.receiver}',contactnumber = '${address.contactnumber}',address = '${address.address}' WHERE id='${address.id}'` + query, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).send('Error',error);
