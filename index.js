@@ -616,6 +616,37 @@ router.delete('/delete/products/:name_id/:img', async (req, res) => {
 
 })
 
+router.get('/get/flash-sales/:ids', (req, res) => {
+    const ids = req.params.ids
+    pool.query(`SELECT * FROM FLASH_SALES WHERE pid in (ids)`, (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).json({result:'failed'});
+        } else {
+            res.status(200).json({rows:results.rows,result:'success'});
+        }
+    });
+})
+
+router.post('/post/flash-sales', async (req, res) => {
+    const form = req.body;
+    const list = form.list
+    let data = ''
+    for (let s of list){
+        data+=`('${s.pid}', '${s.sale}' , '${s.datesale_from}', '${s.datesale_to}'),`
+    }
+    data = data.slice(0, -1);
+
+    pool.query(`INSERT INTO FLASH_SALES(pid,sale,datasale_from,datesale_to) VALUES data`, (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).json({result:'Error: '+error});
+        } else {
+            res.status(200).json({result:'success'});
+        }
+    });
+})
+
 // router.post('/post/products', (req, res) => {
 //     //(name,size,cost,cid) 
 //     const form = req.body;
@@ -722,7 +753,7 @@ router.get('/get/cart/:uid', (req, res) => {
         LEFT JOIN PRODUCTS ON c.pid=PRODUCTS.id`, (error, results) => {
         if (error) {
             console.error(error);
-            res.status(500).json({result:'Failed'});
+            res.status(500).json({result:'failed'});
         } else {
             res.status(200).json({rows:results.rows,result:'success'});
         }
