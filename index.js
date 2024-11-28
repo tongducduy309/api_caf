@@ -264,8 +264,9 @@ router.get('/get/users/:email/:password', (req, res) => {
 })
 
 
-router.get('/get/address-of-user/:uid', (req, res) => {
+router.get('/get/address-of-user/:uid/:id_address_default', (req, res) => {
     const uid = req.params.uid;
+    const id_address_default = req.params.id_address_default;
     pool.query(`SELECT * FROM address_of_user WHERE uid='${uid}'`, (error, results) => {
         if (error) {
             console.error(error);
@@ -273,7 +274,7 @@ router.get('/get/address-of-user/:uid', (req, res) => {
         } else {
             const address = results.rows
             for (let a of address){
-                if (a.uid==uid){
+                if (a.id==id_address_default){
                     a['default']=true
                 }
                 else a['default']=false
