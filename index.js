@@ -337,7 +337,7 @@ router.put('/put/address-of-user', (req, res) => {
     const address = req.body
     let query = ''
     if (address.default){
-        query = ` ; UPDATE USERS SET id_address_default=${address.id} WHERE uid = ${address.uid}`
+        query = ` ; UPDATE USERS SET id_address_default=${address.id} WHERE id = '${address.uid}'`
     }
     pool.query(`UPDATE address_of_user SET receiver = '${address.receiver}',contactnumber = '${address.contactnumber}',address = '${address.address}' WHERE id='${address.id}'` + query, (error, results) => {
         if (error) {
@@ -345,7 +345,7 @@ router.put('/put/address-of-user', (req, res) => {
             res.status(500).send('Error',error);
         } else {
 
-            return res.status(200).json({result:(results.rowCount==1)?'success':'Failed'})
+            return res.status(200).json({result:(results.rowCount==1)?'success':'failed'})
         }
     });
 })
