@@ -637,7 +637,7 @@ router.post('/post/flash-sales', async (req, res) => {
     }
     data = data.slice(0, -1);
 
-    pool.query(`INSERT INTO FLASH_SALES(pid,sale,datasale_from,datesale_to) VALUES ${data}`, (error, results) => {
+    pool.query(`INSERT INTO FLASH_SALES(pid,sale,datesale_from,datesale_to) VALUES ${data}`, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).json({result:'Error: '+error});
