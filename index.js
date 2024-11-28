@@ -438,7 +438,7 @@ router.put('/put/users/changeName', (req, res) => {
 
 // ==========================PRODUCT================================
 router.get('/get/products/all', (req, res) => {
-    pool.query(`SELECT products.*,CATEGORIES.name AS c_name,CATEGORIES.type AS c_type FROM (SELECT PRODUCTS.*,IMG_PRODUCT.img FROM PRODUCTS LEFT JOIN IMG_PRODUCT ON PRODUCTS.name_id=IMG_PRODUCT.p_name_id) AS PRODUCTS LEFT JOIN CATEGORIES ON PRODUCTS.cid=CATEGORIES.id`, (error, results) => {
+    pool.query(`SELECT PRODUCTS.*, FS.SALE, FS.DATESALE_FROM,FS.DATESALE_TO FROM (SELECT products.*,CATEGORIES.name AS c_name,CATEGORIES.type AS c_type FROM (SELECT PRODUCTS.*,IMG_PRODUCT.img FROM PRODUCTS LEFT JOIN IMG_PRODUCT ON PRODUCTS.name_id=IMG_PRODUCT.p_name_id) AS PRODUCTS LEFT JOIN CATEGORIES ON PRODUCTS.cid=CATEGORIES.id) AS PRODUCTS LEFT JOIN (SELECT * FROM FLASH_SALES WHERE NOW()>= DATESALE_FROM AND NOW()<=DATESALE_TO) AS FS ON FS.pid=PRODUCTS.id`, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).send('Error',error);
@@ -618,7 +618,7 @@ router.delete('/delete/products/:name_id/:img', async (req, res) => {
 
 router.get('/get/flash-sales/:ids', (req, res) => {
     const ids = req.params.ids
-    pool.query(`SELECT * FROM FLASH_SALES WHERE pid in (ids)`, (error, results) => {
+    pool.query(`SELECT * FROM FLASH_SALES WHERE pid in (${ids})`, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).json({result:'failed'});
