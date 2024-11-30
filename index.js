@@ -468,6 +468,18 @@ router.get('/get/products/:key', (req, res) => {
     }
 })
 
+router.get('/get/products-id/:id', (req, res) => {
+    const id = req.params.id
+    pool.query(`SELECT PRODUCTS.*, IMG_PRODUCT.img FROM (SELECT * FROM PRODUCTS WHERE id="${id}") AS PRODUCTS LEFT JOIN IMG_PRODUCT ON IMG_PRODUCT.p_name_id=PRODUCTS.name_id`, (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).json({result:'failed'});
+        } else {
+            res.status(200).json({rows:results.rows,result:'success'});
+        }
+    });
+})
+
 router.get('/get/flash-sales/all', (req, res) => {
     pool.query(`SELECT PRODUCTS.*, FS.SALE, FS.DATESALE_FROM,FS.DATESALE_TO FROM (SELECT products.id,products.img,products.name,products.size,products.cost,CATEGORIES.name AS c_name FROM (SELECT PRODUCTS.*,IMG_PRODUCT.img FROM PRODUCTS LEFT JOIN IMG_PRODUCT ON PRODUCTS.name_id=IMG_PRODUCT.p_name_id) AS PRODUCTS LEFT JOIN CATEGORIES ON PRODUCTS.cid=CATEGORIES.id) AS PRODUCTS RIGHT JOIN (SELECT * FROM FLASH_SALES WHERE NOW()>= DATESALE_FROM AND NOW()<=DATESALE_TO) AS FS ON FS.pid=PRODUCTS.id`, (error, results) => {
         if (error) {
@@ -764,11 +776,12 @@ router.post('/post/checkout', async (req, res) => {
     res.status(200).send('success');
 })
 
+
 // ==========================CART================================
 router.get('/get/cart/:uid', (req, res) => {
     const uid = req.params.uid
-    pool.query(`SELECT PRODUCTS.name,PRODUCTS.cost,PRODUCTS.size,PRODUCTS.shelf_status,c.id,c.pid,c.note,c.quantity FROM (SELECT * FROM CART WHERE uid='${uid}') AS c
-        LEFT JOIN PRODUCTS ON c.pid=PRODUCTS.id`, (error, results) => {
+    pool.query(`SELECT PRODUCTS.*,IMG_PRODUCT.img FROM (SELECT PRODUCTS.name, PRODUCTS.name_id,PRODUCTS.cost,PRODUCTS.size,PRODUCTS.shelf_status,c.id,c.pid,c.note,c.quantity FROM (SELECT * FROM CART WHERE uid='${uid}') AS c
+        LEFT JOIN PRODUCTS ON c.pid=PRODUCTS.id) AS PRODUCTS LEFT JOIN IMG_PRODUCT ON IMG_PRODUCT.p_name_id=PRODUCTS.name_id`, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).json({result:'failed'});
@@ -823,6 +836,29 @@ router.put('/put/cart', (req, res) => {
 })
 
 
+// ==========================VOUCHER================================
+router.get('/get/voucher', (req, res) => {
+    const code = req.params.code
+    pool.query(`SELECT * FROM voucher`, (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).json({result:'failed'});
+        } else {
+            res.status(200).json({rows:results.rows,result:'success'});
+        }
+    });
+})
+router.get('/get/voucher/:code', (req, res) => {
+    const code = req.params.code
+    pool.query(`SELECT * FROM voucher WHERE code="${id}" AND NOW()>= DATE_FROM AND NOW()<=DATE_TO`, (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).json({result:'failed'});
+        } else {
+            res.status(200).json({rows:results.rows,result:'success'});
+        }
+    });
+})
 
 
 
