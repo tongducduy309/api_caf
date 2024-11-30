@@ -468,7 +468,7 @@ router.get('/get/products/:key', (req, res) => {
     }
 })
 
-router.get('/get/products-id/:id', (req, res) => {
+router.get('/get/product/:id', (req, res) => {
     const id = req.params.id
     pool.query(`SELECT PRODUCTS.*, IMG_PRODUCT.img FROM (SELECT * FROM PRODUCTS WHERE id="${id}") AS PRODUCTS LEFT JOIN IMG_PRODUCT ON IMG_PRODUCT.p_name_id=PRODUCTS.name_id`, (error, results) => {
         if (error) {
