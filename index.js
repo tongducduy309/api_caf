@@ -850,7 +850,7 @@ router.get('/get/voucher', (req, res) => {
 })
 router.get('/get/voucher/:code', (req, res) => {
     const code = req.params.code
-    pool.query(`SELECT * FROM voucher WHERE code="${id}" AND NOW()>= DATE_FROM AND NOW()<=DATE_TO`, (error, results) => {
+    pool.query(`SELECT * FROM voucher WHERE code="${code}" AND NOW()>= DATE_FROM AND NOW()<=DATE_TO`, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).json({result:'failed'});
