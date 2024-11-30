@@ -470,7 +470,7 @@ router.get('/get/products/:key', (req, res) => {
 
 router.get('/get/product/:id', (req, res) => {
     const id = req.params.id
-    pool.query(`SELECT PRODUCTS.*, IMG_PRODUCT.img FROM (SELECT * FROM PRODUCTS WHERE id="${id}") AS PRODUCTS LEFT JOIN IMG_PRODUCT ON IMG_PRODUCT.p_name_id=PRODUCTS.name_id`, (error, results) => {
+    pool.query(`SELECT PRODUCTS.*, IMG_PRODUCT.img FROM (SELECT * FROM PRODUCTS WHERE id="${id}" AND shelf_status=true) AS PRODUCTS LEFT JOIN IMG_PRODUCT ON IMG_PRODUCT.p_name_id=PRODUCTS.name_id`, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).json({result:'failed'});
