@@ -688,9 +688,10 @@ router.get('/get/customer-reviews/:id', (req, res) => {
 
 router.get('/get/best-customer-reviews/:number', (req, res) => {
     const number = req.params.number;
+    
     pool.query(`SELECT p.*,IMG_PRODUCT.img FROM (select CS.*, products.name as p_name from (SELECT * FROM CUSTOMER_REVIEWS 
 ORDER BY point ASC
-LIMIT 2) as CS
+LIMIT ${number}) as CS
 LEFT JOIN PRODUCTS ON PRODUCTS.name_id=CS.name_id) as p
 LEFT JOIN IMG_PRODUCT ON IMG_PRODUCT.p_name_id=p.name_id`, (error, results) => {
         if (error) {
