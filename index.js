@@ -475,7 +475,7 @@ router.get('/get/product/:id', (req, res) => {
             console.error(error);
             res.status(500).json({result:'failed',message:error});
         } else {
-            res.status(200).json({rows:results.rows,result:'success'});
+            res.status(200).json({rows:results.rows[0],result:'success'});
         }
     });
 })
