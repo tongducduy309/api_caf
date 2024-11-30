@@ -80,26 +80,7 @@ function generateId(s){
     return removeVietnameseTones(s).toLowerCase().replaceAll(" ","-")
 }
 
-async function verifyPassword(password,   
- hash) {
-    const match = await argon2.verify(hash, password);
-    return match;
-}
 
-// const hbsOptions = {
-//     viewEngine:{
-//         defaultLayout: false
-//     },
-//     viewPath: 'views'
-// }
-
-// const hbs = c.create(hbsOptions)
-
-
-
-app.get('/email', (req, res) => {
-  res.sendFile();
-});
 
 
 // transporter.use('compile', hbs)
@@ -470,7 +451,6 @@ ORDER BY CS.point ASC`
     });
 })
 
-
 router.get('/get/products/:key', (req, res) => {
     let key_name = req.params.key
     let key = removeVietnameseTones(req.params.key);
@@ -697,6 +677,22 @@ router.post('/post/customer-reviews', (req, res) => {
 router.get('/get/customer-reviews/:id', (req, res) => {
     const id = req.params.id;
     pool.query(`SELECT * FROM CUSTOMER_REVIEWS WHERE name_id = '${id}'`, (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).send('Error',error);
+        } else {
+            res.status(200).json(results.rows);
+        }
+    });
+})
+
+router.get('/get/best-customer-reviews/:number', (req, res) => {
+    const number = req.params.number;
+    pool.query(`SELECT p.*,IMG_PRODUCT.img FROM (select CS.*, products.name as p_name from (SELECT * FROM CUSTOMER_REVIEWS 
+ORDER BY point ASC
+LIMIT ${number}) as CS
+LEFT JOIN PRODUCTS ON PRODUCTS.name_id=CS.name_id) as p
+LEFT JOIN IMG_PRODUCT ON IMG_PRODUCT.p_name_id=p.name_id`, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).send('Error',error);
