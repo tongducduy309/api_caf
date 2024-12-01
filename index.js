@@ -114,19 +114,13 @@ async function sendEmail_register(email_to,name_to,token) {
     console.log("Message sent: %s", info.messageId)
 }
 
-async function sendEmail_Order(email_to,user) {
+async function sendEmail_Order(email_to,user,bill) {
     
     const source = fs.readFileSync(path.join(__dirname, 'template', 'bill.html'), 'utf-8').toString();
     const template = handlebars.compile(source);
     const replacements = {
     user:user,
-    products:[
-        {name:"C",
-            quantity:2,
-            size:"L",
-            note:"Ít đá"
-        }
-    ]
+    products:bill.products
     }; 
     const htmlToSend = template (replacements)
     const info = await transporter.sendMail({
@@ -775,9 +769,9 @@ router.post('/post/categories', (req, res) => {
 router.post('/post/checkout', async (req, res) => {
     const form = req.body;
     // const uid=form.uid
-    // const bill=form.bill
+    const bill=form.bill
     const user=form.user
-    await sendEmail_Order(user.email,user)
+    await sendEmail_Order(user.email,user,bill)
     // const products=form.products
     res.status(200).send('success');
 })
