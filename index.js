@@ -245,22 +245,14 @@ router.get('/get/users/:email/:password', (req, res) => {
 })
 
 
-router.get('/get/address-of-user/:uid/:id_address_default', (req, res) => {
+router.get('/get/address-of-user/:uid', (req, res) => {
     const uid = req.params.uid;
-    const id_address_default = req.params.id_address_default;
     pool.query(`SELECT * FROM address_of_user WHERE uid='${uid}'`, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).json({result:'Failed'});
         } else {
-            const address = results.rows
-            for (let a of address){
-                if (a.id==id_address_default){
-                    a['default']=true
-                }
-                else a['default']=false
-            }
-            // address['result']='Success'
+            const address = results.rows;
             
             
             res.status(200).json({rows:address,result:'success'});
@@ -316,11 +308,24 @@ router.delete('/delete/address-of-user/:aid', (req, res) => {
 
 router.put('/put/address-of-user', (req, res) => {
     const address = req.body
-    let query = ''
-    if (address.default){
-        query = ` ; UPDATE USERS SET id_address_default=${address.id} WHERE id = '${address.uid}'`
-    }
-    pool.query(`UPDATE address_of_user SET receiver = '${address.receiver}',contactnumber = '${address.contactnumber}',address = '${address.address}' WHERE id='${address.id}'` + query, (error, results) => {
+    pool.query(`UPDATE address_of_user SET receiver = '${address.receiver}',contactnumber = '${address.contactnumber}',address = '${address.address}' WHERE id='${address.id}'`, (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).json({result:'error'});
+        } else {
+
+            return res.status(200).json({result:'success'})
+        }
+    });
+})
+
+router.put('/put/address-of-user/default', (req, res) => {
+    const address = req.body
+    const id = address.id
+    const uid = address.uid
+    pool.query(`UPDATE address_of_user
+SET default_ = CASE WHEN id = '${id}' THEN TRUE ELSE FALSE END
+WHERE uid = '${uid}'`, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).json({result:'error'});
