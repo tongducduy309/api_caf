@@ -120,7 +120,7 @@ async function sendEmail_Order(email_to,user,bill) {
     const template = handlebars.compile(source);
     const replacements = {
     user:user,
-    products:bill.products
+    bill:bill
     }; 
     const htmlToSend = template (replacements)
     const info = await transporter.sendMail({
