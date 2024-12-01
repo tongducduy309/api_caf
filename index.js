@@ -283,7 +283,8 @@ router.post('/post/address-of-user', (req, res) => {
     const receiver=form.receiver
     const contactnumber=form.contactnumber
     const address=form.address
-    pool.query(`Select Add_Address(${uid}, '${receiver}', '${contactnumber}', '${address}')`, (error, results) => {
+    const default_=form.default_
+    pool.query(`Select Add_Address(${uid}, '${receiver}', '${contactnumber}', '${address}','${default_}')`, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).json({result:'Error: '+error});
