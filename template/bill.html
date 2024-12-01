@@ -146,7 +146,7 @@
             </div>
             <div class="pd-bottom-5">
                 <p>Người nhận: <b>{{user.receiver}}</b></p>
-                <p>Số điện thoại: <b>{{user.contactNumber}}</b></p>
+                <p>Số điện thoại: <b>{{user.contactnumber}}</b></p>
                 <p>Địa chỉ: <b>{{user.address}}</b></p>
             </div>
             <div class="border-bottom-3 pd-bottom-5">
@@ -185,24 +185,24 @@
             <div class="total">
                 <div class="group">
                   <div class="inline">
-                    <b>Tạm tính:</b>
-                    <div>{{bill.subtotal}} <span>VND</span></div>
+                    
+                    <div><b>Tạm tính: </b>{{bill.subtotal}} <span>VND</span></div>
                   </div>
                   <div class="inline">
-                    <b>Phí vận chuyển:</b>
-                    <div>{{bill.delivery_fee}} <span>VND</span></div>
+                    
+                    <div><b>Phí vận chuyển: </b>{{bill.delivery_fee}} <span>VND</span></div>
                   </div>
                   <div class="inline">
-                    <b>Giảm giá:</b>
-                    <div>{{bill.discount}} <span>VND</span></div>
+                    
+                    <div><b>Giảm giá: </b>{{bill.discount}} <span>VND</span></div>
                   </div>
                   <div class="inline" *ngIf="bill.discount>0">
                     <b></b>
                     <div class="cost">{{100000}} <span>VND</span></div>
                   </div>
                   <div class="inline">
-                    <b>Tổng:</b>
-                    <div style="font-weight: 600;">{{bill.cost}} <span>VND</span></div>
+                    
+                    <div style="font-weight: 600;"><b>Tổng: </b>{{bill.cost}} <span>VND</span></div>
                   </div>
                 </div>
               </div>
