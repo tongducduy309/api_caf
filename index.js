@@ -247,7 +247,7 @@ router.get('/get/users/:email/:password', (req, res) => {
 
 router.get('/get/address-of-user/:uid', (req, res) => {
     const uid = req.params.uid;
-    pool.query(`SELECT * FROM address_of_user WHERE uid='${uid}'`, (error, results) => {
+    pool.query(`SELECT * FROM address_of_user WHERE uid='${uid}' ORDER BY default_ desc`, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).json({result:'Failed'});
