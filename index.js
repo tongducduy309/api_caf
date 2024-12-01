@@ -80,6 +80,16 @@ function generateId(s){
     return removeVietnameseTones(s).toLowerCase().replaceAll(" ","-")
 }
 
+function formatPrice(num) {
+    try {
+      return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+    catch (e){
+      return '0'
+    }
+    return num
+  }
+
 
 
 
@@ -120,7 +130,13 @@ async function sendEmail_Order(email_to,user,bill) {
     const template = handlebars.compile(source);
     const replacements = {
     user:user,
-    bill:bill
+    bill:{
+        products:bill.products,
+        subtotal:formatPrice(bill.subtotal),
+        delivery_fee:formatPrice(bill.delivery_fee),
+        discount:bill.discount,
+        cost:formatPrice(bill.cost)
+    }
     }; 
     const htmlToSend = template (replacements)
     const info = await transporter.sendMail({
