@@ -773,7 +773,7 @@ router.post('/post/checkout', async (req, res) => {
     const user=form.user
     await sendEmail_Order(user.email,user,bill)
     // const products=form.products
-    res.status(200).send('success');
+    res.status(200).send({result:'success'});
 })
 
 
