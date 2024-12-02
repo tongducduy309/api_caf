@@ -796,7 +796,7 @@ router.post('/post/checkout', async (req, res) => {
             res.status(500).json({result:'error',message:error});
         } else {
             let data = ''
-            const bid = results.rows[0]
+            // const bid = results.rows[0]
             return res.json(results)
             for (let s of bill.products){
                 data+=`('${bid}', '${s.id}', '${s.quantity}', '${s.price}', '${s.sale}' , '${s.note}'),`
