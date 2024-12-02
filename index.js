@@ -132,10 +132,12 @@ async function sendEmail_Order(email_to,user,bill) {
     user:user,
     bill:{
         products:bill.products,
+        cost_not_discount:formatPrice(bill.cost/(1-bill.discount/100)),
         subtotal:formatPrice(bill.subtotal),
         delivery_fee:formatPrice(bill.delivery_fee),
         discount:bill.discount,
         cost:formatPrice(bill.cost)
+        
     }
     }; 
     const htmlToSend = template (replacements)
