@@ -794,8 +794,8 @@ router.post('/post/checkout', async (req, res) => {
     }
     data = data.slice(0, -1);
     
-    pool.query(`INSERT INTO BILL (receiver,contactnumber,address,subtotal,delivery_fee,cost,discount,paymentmethod,payment_status) VALUES
-    ('${user.receiver}', '${user.contactnumber}', '${user.address}', '${bill.subtotal}', '${bill.delivery_fee}', '${bill.cost}', '${bill.discount}', '${bill.paymentmethod}', '${bill.payment_status}') ; INSERT INTO DETAIL_BILL (bid,pid,quantity,price,sale,note) VALUES `+data, async (error, results) => {
+    pool.query(`INSERT INTO BILL (id,receiver,contactnumber,address,subtotal,delivery_fee,cost,discount,paymentmethod,payment_status) VALUES
+    ('${bill.id}','${user.receiver}', '${user.contactnumber}', '${user.address}', '${bill.subtotal}', '${bill.delivery_fee}', '${bill.cost}', '${bill.discount}', '${bill.paymentmethod}', '${bill.payment_status}') ; INSERT INTO DETAIL_BILL (bid,pid,quantity,price,sale,note) VALUES `+data, async (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).json({result:'error',message:error});
