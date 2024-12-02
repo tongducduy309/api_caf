@@ -196,7 +196,7 @@
                     
                     <div><b>Phí vận chuyển: </b>{{bill.delivery_fee}} <span>VND</span></div>
                   </div>
-                  {{#ifGt bill.discount 0}}
+                  {{#if bill.discount}}
                   <div class="inline">
                     
                     <div><b>Giảm giá: </b>{{bill.discount}}<span>%</span></div>
@@ -205,7 +205,7 @@
                     <b>Giảm giá: </b>
                     <div>{{bill.discount}}<span>%</span></div>
                   </div>
-                  {{/ifGt}}
+                  {{/if}}
                   <div class="inline">
                     
                     <div style="font-weight: 600;"><b>Tổng: </b>{{bill.cost}} <span>VND</span></div>
