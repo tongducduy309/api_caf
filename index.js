@@ -790,7 +790,7 @@ router.post('/post/checkout', async (req, res) => {
     let data = ''
     const bid = bill.id
     for (let s of bill.products){
-        data+=`('${bid}', '${s.id}', '${s.quantity}', '${s.cost}', '${s.sale}' , '${s.note}'),`
+        data+=`('${bid}', '${s.pid}', '${s.quantity}', '${s.cost}', '${s.sale}' , '${s.note}'),`
     }
     data = data.slice(0, -1);
     
