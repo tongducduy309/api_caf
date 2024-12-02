@@ -27,6 +27,10 @@
             p{
                 font-size: 16px;
                 margin: 0;
+                color: #000;
+            }
+            b{
+                color: #000;
             }
     
             #btnForm{
@@ -192,7 +196,16 @@
                     
                     <div><b>Phí vận chuyển: </b>{{bill.delivery_fee}} <span>VND</span></div>
                   </div>
-                  
+                  {{#ifGt bill.discount 0}}
+                  <div class="inline">
+                    
+                    <div><b>Giảm giá: </b>{{bill.discount}}<span>%</span></div>
+                  </div>
+                  <div class="inline">
+                    <b>Giảm giá: </b>
+                    <div>{{bill.discount}}<span>%</span></div>
+                  </div>
+                  {{/ifGt}}
                   <div class="inline">
                     
                     <div style="font-weight: 600;"><b>Tổng: </b>{{bill.cost}} <span>VND</span></div>
