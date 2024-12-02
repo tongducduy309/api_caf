@@ -13,10 +13,6 @@
             }
 
             .inline{
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                width: 100%;
 
                 font-size: 18px;
             }
@@ -205,26 +201,25 @@
             <div class="total">
                 <div class="group" style="text-align: right;">
                   <div class="inline">
-                    <b>Tạm tính: </b>
-                    <div>{{bill.subtotal}} <span>VND</span></div>
+                    
+                    <div><b>Tạm tính: </b>{{bill.subtotal}} <span>VND</span></div>
                   </div>
                   <div class="inline">
-                    <b>Phí vận chuyển: </b>
-                    <div>{{bill.delivery_fee}} <span>VND</span></div>
+                    
+                    <div><b>Phí vận chuyển: </b>{{bill.delivery_fee}} <span>VND</span></div>
                   </div>
                   {{#if bill.discount}}
                   <div class="inline">
-                    <b>Giảm giá: </b>
-                    <div>-{{bill.discount}}<span>%</span></div>
+                    
+                    <div><b>Giảm giá: </b>-{{bill.discount}}<span>%</span></div>
                   </div>
                   <div class="inline">
-                    <b></b>
                     <div class="cost-not-discount">{{bill.cost_not_discount}} <span>VND</span></div>
                   </div>
                   {{/if}}
                   <div class="inline">
-                    <b>Tổng: </b>
-                    <div style="font-weight: 600;">{{bill.cost}} <span>VND</span></div>
+                    
+                    <div style="font-weight: 600;"><b>Tổng: </b>{{bill.cost}} <span>VND</span></div>
                   </div>
                 </div>
             </div>
