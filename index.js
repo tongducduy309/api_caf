@@ -802,7 +802,7 @@ router.post('/post/checkout', async (req, res) => {
         } else {
             
             
-            await sendEmail_Order(user.email,user,bill)
+            // await sendEmail_Order(user.email,user,bill)
             res.status(200).json({result:'success'});
         }
     });
