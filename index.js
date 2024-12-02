@@ -787,9 +787,36 @@ router.post('/post/checkout', async (req, res) => {
     // const uid=form.uid
     const bill=form.bill
     const user=form.user
-    await sendEmail_Order(user.email,user,bill)
+
+    
+    pool.query(`INSERT INTO BILL (receiver,contactnumber,address,subtotal,delivery_fee,cost,discount,paymentmethod,payment_status) VALUES
+    ('${bill.receiver}', '${bill.contactnumber}', '${bill.address}', '${bill.subtotal}', '${bill.delivery_fee}', '${bill.cost}', '${bill.discount}', '${bill.paymentmethod}', '${bill.payment_status}')`, (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).json({result:'error',message:error});
+        } else {
+            let data = ''
+            const bid = results.rows[0]
+            return res.json(results)
+            for (let s of bill.products){
+                data+=`('${bid}', '${s.id}', '${s.quantity}', '${s.price}', '${s.sale}' , '${s.note}'),`
+            }
+            data = data.slice(0, -1);
+            pool.query(`INSERT INTO DETAIL_BILL (bid,pid,quantity,price,sale,note) VALUES `+data, async (error, results) => {
+                    if (error) {
+                        console.error(error);
+                        res.status(500).json({result:'error',message:error});
+                    } else {
+                        await sendEmail_Order(user.email,user,bill)
+                        res.status(200).json({result:'success'});
+                    }
+                });
+            // res.status(200).json({result:'success'});
+        }
+    });
+    
     // const products=form.products
-    res.status(200).send({result:'success'});
+    // res.status(200).send({result:'success'});
 })
 
 
