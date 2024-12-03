@@ -880,7 +880,7 @@ router.get('/get/voucher/:code', (req, res) => {
 // ==========================BILL================================
 router.get('/get/bills/:uid', (req, res) => {
     const uid = req.params.uid
-    pool.query(`SELECT PRODUCTS.*,img FROM (SELECT bill.*, PRODUCTS.name_id,PRODUCTS.name FROM (SELECT BILL.*,pid,quantity,cost,sale,note FROM (SELECT * FROM BILL WHERE uid = '${uid}') as BILL
+    pool.query(`SELECT PRODUCTS.*,img FROM (SELECT bill.*, PRODUCTS.name_id,PRODUCTS.name FROM (SELECT BILL.*,pid,quantity,DB.cost as p_cost,sale,note FROM (SELECT * FROM BILL WHERE uid = '${uid}') as BILL
 LEFT JOIN DETAIL_BILL AS DB ON DB.bid = BILL.id) AS BILL
 LEFT JOIN PRODUCTS ON BILL.pid=PRODUCTS.id) AS PRODUCTS
 LEFT JOIN IMG_PRODUCT ON IMG_PRODUCT.p_name_id=PRODUCTS.name_id`, (error, results) => {
@@ -897,7 +897,7 @@ LEFT JOIN IMG_PRODUCT ON IMG_PRODUCT.p_name_id=PRODUCTS.name_id`, (error, result
                         note:row.note,
                         name:row.name,
                         img:row.img,
-                        cost:row.cost
+                        cost:row.p_cost
                     })
                 }
                 else{
@@ -921,7 +921,7 @@ LEFT JOIN IMG_PRODUCT ON IMG_PRODUCT.p_name_id=PRODUCTS.name_id`, (error, result
                                 note:row.note,
                                 name:row.name,
                                 img:row.img,
-                                cost:row.cost
+                                cost:row.p_cost
                             }
                         ]
                     }
