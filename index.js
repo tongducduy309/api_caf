@@ -186,22 +186,7 @@ const pool = new pg.Pool({
 
 // const db =pool.connect();
 
-// ==========================Admin================================
-router.get('/get/sf/:token', (req, res) => {
-    const token = req.params.token;
-    pool.query(`SELECT id,role FROM USERS WHERE token='${token}'`, (error, results) => {
-        if (error) {
-            console.error(error);
-            res.status(500).json({result:'Failed'});
-        } else {
-            if (results.rowCount==0)
-                return res.status(200).json({result:'Not Exist'});
-            const user = results.rows[0]
-            user['result']='Success'
-            res.status(200).json(user);
-        }
-    });
-})
+
 
 // ==========================USER================================
 router.get('/get/users/:token', (req, res) => {
@@ -209,7 +194,7 @@ router.get('/get/users/:token', (req, res) => {
     pool.query(`SELECT id,fullname,email,point,verify FROM USERS WHERE token='${token}'`, (error, results) => {
         if (error) {
             console.error(error);
-            res.status(500).json({result:'Failed'});
+            res.status(500).json({result:'failed',message:error});
         } else {
             if (results.rowCount==0)
                 return res.status(200).json({result:'Not Exist'});
@@ -236,7 +221,7 @@ router.get('/get/users/:email/:password', (req, res) => {
     pool.query(`SELECT id,fullname,email,point,verify,token,password FROM USERS WHERE email='${email}'`, async (error, results) => {
         if (error) {
             console.error(error);
-            res.status(500).json({result:'Failed'});
+            res.status(500).json({result:'failed',message:error});
         } else {
             if (results.rowCount==0)
                 return res.status(200).json({result:'Not Exist'});
@@ -262,7 +247,7 @@ router.get('/get/address-of-user/:uid', (req, res) => {
     pool.query(`SELECT * FROM address_of_user WHERE uid='${uid}' ORDER BY default_ desc`, (error, results) => {
         if (error) {
             console.error(error);
-            res.status(500).json({result:'Failed'});
+            res.status(500).json({result:'failed',message:error});
         } else {
             const address = results.rows;
             
@@ -277,7 +262,7 @@ router.get('/get/reset-your-password/:email', (req, res) => {
     pool.query(`SELECT * FROM USERS WHERE email='${email}'`, async (error, results) => {
         if (error) {
             console.error(error);
-            return res.status(500).json({result:'failed'});
+            return res.status(500).json({result:'failed',message:error});
         } else {
             
             if (results.rows.length==0)
@@ -299,7 +284,7 @@ router.post('/post/address-of-user', (req, res) => {
     pool.query(`Select Add_Address(${uid}, '${receiver}', '${contactnumber}', '${address}','${default_}')`, (error, results) => {
         if (error) {
             console.error(error);
-            res.status(500).json({result:'Error: '+error});
+            res.status(500).json({result:'failed',message:error});
         } else {
             res.status(200).json({rows:results.rows[0].add_address,result:'success'});
         }
@@ -312,7 +297,7 @@ router.delete('/delete/address-of-user/:aid', (req, res) => {
     pool.query(`DELETE FROM ADDRESS_OF_USER WHERE id='${aid}'`, (error, results) => {
         if (error) {
             console.error(error);
-            res.status(500).json({result:'Error: '+error});
+            res.status(500).json({result:'failed',message:error});
         } else {
             res.status(200).json({result:'success'});
         }
@@ -324,7 +309,7 @@ router.put('/put/address-of-user', (req, res) => {
     pool.query(`UPDATE address_of_user SET receiver = '${address.receiver}',contactnumber = '${address.contactnumber}',address = '${address.address}' WHERE id='${address.id}'`, (error, results) => {
         if (error) {
             console.error(error);
-            res.status(500).json({result:'error'});
+            res.status(500).json({result:'failed',message:error});
         } else {
 
             return res.status(200).json({result:'success'})
@@ -341,7 +326,7 @@ SET default_ = CASE WHEN id = '${id}' THEN TRUE ELSE FALSE END
 WHERE uid = '${uid}'`, (error, results) => {
         if (error) {
             console.error(error);
-            res.status(500).json({result:'error'});
+            res.status(500).json({result:'failed',message:error});
         } else {
 
             return res.status(200).json({result:'success'})
@@ -362,7 +347,7 @@ router.put('/put/users/password', async (req, res) => {
     pool.query(`UPDATE USERS SET password = '${password}', token = '${token_new}' WHERE token='${token}'`, (error, results) => {
         if (error) {
             console.error(error);
-            res.status(500).json({result:error});
+            res.status(500).json({result:'failed',message:error});
         } else {
 
             return res.status(200).json({result:(results.rowCount==1)?'success':'failed'})
@@ -386,13 +371,13 @@ router.post('/post/register', async (req, res) => {
     pool.query(`SELECT REGISTER ('${fullname}', '${email}', '${password}', '${token}')`, async (error, results) => {
         if (error) {
             console.error(error);
-            res.status(500).send('Error: Insert Into');
+            res.status(500).json({result:'failed',message:error});
         } else {
             if (results.rows[0].register=='Success'){
                 await sendEmail_register(email,fullname,token)
-                return res.status(200).send("Successful")
+                return res.status(200).json({result:'success'})
             }
-            else return res.status(200).send("Failed")
+            else return res.status(500).json({result:'failed',message:error});
             
         }
     });
@@ -407,7 +392,7 @@ router.put('/put/users/verify', (req, res) => {
     pool.query(`UPDATE USERS SET verify=1 WHERE token='${token}' AND verify=0`, (error, results) => {
         if (error) {
             console.error(error);
-            res.status(500).send('Error',error);
+            res.status(500).json({result:'failed',message:error});
         } else {
 
             return res.status(200).json({result:(results.rowCount==1)?'Success':'Verified'})
@@ -421,10 +406,10 @@ router.put('/put/users/changeName', (req, res) => {
     pool.query(`UPDATE USERS SET fullname='${fullname}' WHERE id='${uid}'`, (error, results) => {
         if (error) {
             console.error(error);
-            res.status(500).send('Error',error);
+            res.status(500).json({result:'failed',message:error});
         } else {
 
-            return res.status(200).json({result:(results.rowCount==1)?'Success':'Failed'})
+            return res.status(200).json({result:'success'})
         }
     });
 })
@@ -433,7 +418,7 @@ router.put('/put/users/changeName', (req, res) => {
 //     pool.query('SELECT * FROM accounts', (error, results) => {
 //         if (error) {
 //             console.error(error);
-//             res.status(500).send('Error',error);
+//             res.status(500).json({result:'failed',message:error});
 //         } else {
 //             res.json(results.rows);
 //         }
@@ -445,9 +430,9 @@ router.get('/get/products/all', (req, res) => {
     pool.query(`SELECT PRODUCTS.*, FS.SALE, FS.DATESALE_FROM,FS.DATESALE_TO FROM (SELECT products.*,CATEGORIES.name AS c_name,CATEGORIES.type AS c_type FROM (SELECT PRODUCTS.*,IMG_PRODUCT.img FROM PRODUCTS LEFT JOIN IMG_PRODUCT ON PRODUCTS.name_id=IMG_PRODUCT.p_name_id) AS PRODUCTS LEFT JOIN CATEGORIES ON PRODUCTS.cid=CATEGORIES.id) AS PRODUCTS LEFT JOIN (SELECT * FROM FLASH_SALES WHERE NOW()>= DATESALE_FROM AND NOW()<=DATESALE_TO) AS FS ON FS.pid=PRODUCTS.id`, (error, results) => {
         if (error) {
             console.error(error);
-            res.status(500).send('Error',error);
+            res.status(500).json({result:'failed',message:error});
         } else {
-            res.status(200).json(group(results.rows));
+            res.status(200).json({data:group(results.rows),result:'success'});
         }
     });
 })
@@ -459,12 +444,12 @@ ORDER BY CS.point ASC`
     pool.query(query, (error, results) => {
         if (error) {
             console.error(error);
-            res.status(500).send('Error',error);
+            res.status(500).json({result:'failed',message:error});
         } else {
             if (number=='all')
-                res.status(200).json(group(results.rows));
+                res.status(200).json({data:group(results.rows),result:'success'});
             else
-            res.status(200).json(group(results.rows).slice(0,number));
+            res.status(200).json({data:group(results.rows).slice(0,number),result:'success'});
         }
     });
 })
@@ -477,10 +462,10 @@ router.get('/get/products/:key', (req, res) => {
             `, (error, results) => {
             if (error) {
                 console.error(error);
-                res.status(500).send('Error',error);
+                res.status(500).json({result:'failed',message:error});
             } else {
                 
-                res.status(200).json(group(results.rows));
+                res.status(200).json({data:group(results.rows),result:'success'});
             }
         });
     }
@@ -493,7 +478,7 @@ router.get('/get/product/:id', (req, res) => {
             console.error(error);
             res.status(500).json({result:'failed',message:error});
         } else {
-            res.status(200).json({rows:results.rows[0],result:'success'});
+            res.status(200).json({data:results.rows[0],result:'success'});
         }
     });
 })
@@ -502,10 +487,10 @@ router.get('/get/flash-sales/all', (req, res) => {
     pool.query(`SELECT PRODUCTS.*, FS.SALE, FS.DATESALE_FROM,FS.DATESALE_TO FROM (SELECT products.id,products.img,products.name,products.size,products.cost,CATEGORIES.name AS c_name FROM (SELECT PRODUCTS.*,IMG_PRODUCT.img FROM PRODUCTS LEFT JOIN IMG_PRODUCT ON PRODUCTS.name_id=IMG_PRODUCT.p_name_id) AS PRODUCTS LEFT JOIN CATEGORIES ON PRODUCTS.cid=CATEGORIES.id) AS PRODUCTS RIGHT JOIN (SELECT * FROM FLASH_SALES WHERE NOW()>= DATESALE_FROM AND NOW()<=DATESALE_TO) AS FS ON FS.pid=PRODUCTS.id`, (error, results) => {
         if (error) {
             console.error(error);
-            res.status(500).send('Error',error);
+            res.status(500).json({result:'failed',message:error});
         } else {
             
-            res.status(200).json(results.rows);
+            res.status(200).json({data:results.rows,result:'success'});
         }
     });
 })
@@ -513,7 +498,7 @@ router.get('/get/flash-sales/all', (req, res) => {
 router.get('/get/all-products/:name_id_category', (req, res) => {
     const name_id_category = req.params.name_id_category;
     if (!name_id_category||name_id_category.trim()==''){
-        return res.status(400).send('Failed');
+        return res.status(400).json({result:'failed',message:error});
     }
     pool.query(`
         SELECT PRODUCTS.*,IMG_PRODUCT.img FROM (SELECT PRODUCTS.* FROM PRODUCTS,(SELECT id FROM CATEGORIES WHERE name_id='${name_id_category}') AS c
@@ -521,10 +506,10 @@ router.get('/get/all-products/:name_id_category', (req, res) => {
             // AND PRODUCTS.shelf_status=1
         if (error) {
             console.error(error);
-            res.status(500).send('Error',error);
+            res.status(500).json({result:'failed',message:error});
         } else {
             
-            res.status(200).json(group(results.rows));
+            res.status(200).json({data:group(results.rows),result:'success'});
         }
     });
 })
@@ -586,7 +571,7 @@ router.post("/post/products", (req, res) => {
         ${data} ; INSERT INTO IMG_PRODUCT(img,p_name_id) VALUES ('${imageUrl}','${name_id}')`, (error, results) => {
             if (error) {
                 console.error(error);
-                return res.status(500).send('Error: Insert Into');
+                return res.status(500).json({result:'failed',message:error});
             } 
             else{
                 return res.status(200).json({result:"success"})
@@ -631,15 +616,15 @@ router.delete('/delete/products/:name_id/:img', async (req, res) => {
         })
         .catch((error) => {
             console.error('Error deleting file:', error);
-            return res.status(500).json({result:'Error: '+error});
+            return res.status(500).json({result:'failed',message:error});
         });
     } catch (error) {
-        return res.status(500).json({result:'Error: '+error});
+        return res.status(500).json({result:'failed',message:error});
     }
     pool.query(`DELETE FROM Products WHERE name_id='${name_id}' ; DELETE FROM IMG_PRODUCT WHERE p_name_id='${name_id}'`, (error, results) => {
         if (error) {
             console.error(error);
-            return res.status(500).json({result:'Error: '+error});
+            return res.status(500).json({result:'failed',message:error});
         } else {
             res.status(200).json({result:'success'});
         }
@@ -672,7 +657,7 @@ router.post('/post/flash-sales', async (req, res) => {
     pool.query(`INSERT INTO FLASH_SALES(pid,sale,datesale_from,datesale_to) VALUES ${data}`, (error, results) => {
         if (error) {
             console.error(error);
-            res.status(500).json({result:'Error: '+error});
+            res.status(500).json({result:'failed',message:error});
         } else {
             res.status(200).json({result:'success'});
         }
@@ -697,9 +682,9 @@ router.post('/post/customer-reviews', (req, res) => {
     ('${name_id}', '${point}', '${name}', '${email}', '${comment}')`, (error, results) => {
         if (error) {
             console.error(error);
-            res.status(500).send('Error: Insert Into');
+            res.status(500).json({result:'failed',message:error});
         } else {
-            res.status(200).send('success');
+            res.status(200).json({result:'success'});
         }
     });
 })
@@ -709,9 +694,9 @@ router.get('/get/customer-reviews/:id', (req, res) => {
     pool.query(`SELECT * FROM CUSTOMER_REVIEWS WHERE name_id = '${id}'`, (error, results) => {
         if (error) {
             console.error(error);
-            res.status(500).send('Error',error);
+            res.status(500).json({result:'failed',message:error});
         } else {
-            res.status(200).json(results.rows);
+            res.status(200).json({result:'success',data:results.rows});
         }
     });
 })
@@ -726,9 +711,9 @@ LEFT JOIN PRODUCTS ON PRODUCTS.name_id=CS.name_id) as p
 LEFT JOIN IMG_PRODUCT ON IMG_PRODUCT.p_name_id=p.name_id`, (error, results) => {
         if (error) {
             console.error(error);
-            res.status(500).send('Error',error);
+            res.status(500).json({result:'failed',message:error});
         } else {
-            res.status(200).json(results.rows);
+            res.status(200).json({result:'success',data:results.rows});
         }
     });
 })
@@ -738,9 +723,9 @@ router.get('/get/categories/all', (req, res) => {
     pool.query(`SELECT * FROM CATEGORIES`, (error, results) => {
         if (error) {
             console.error(error);
-            res.status(500).send('Error',error);
+            res.status(500).json({result:'failed',message:error});
         } else {
-            res.status(200).json(results.rows);
+            res.status(200).json({result:'success',data:results.rows});
         }
     });
 })
@@ -749,7 +734,7 @@ router.get('/get/categories/group-by-type', (req, res) => {
     pool.query(`SELECT * FROM CATEGORIES`, (error, results) => {
         if (error) {
             console.error(error);
-            res.status(500).send('Error',error);
+            res.status(500).json({result:'failed',message:error});
         } else {
             let group_categories = {}
             results.rows.forEach((category)=>{
@@ -759,7 +744,7 @@ router.get('/get/categories/group-by-type', (req, res) => {
                     group_categories[category.type]=[category]
                 }
             })
-            res.status(200).json(group_categories);
+            res.status(200).json({result:'success',data:group_categories});
         }
     });
 })
@@ -775,9 +760,9 @@ router.post('/post/categories', (req, res) => {
     ('${name}', '${type}', '${name_id}')`, (error, results) => {
         if (error) {
             console.error(error);
-            res.status(500).send('Error: Insert Into');
+            res.status(500).json({result:'failed',message:error});
         } else {
-            res.status(200).send('success');
+            res.status(200).json({result:'success'});
         }
     });
 })
@@ -823,7 +808,7 @@ router.get('/get/cart/:uid', (req, res) => {
             console.error(error);
             res.status(500).json({result:'failed'});
         } else {
-            res.status(200).json({rows:results.rows,result:'success'});
+            res.status(200).json({data:results.rows,result:'success'});
         }
     });
 })
@@ -838,9 +823,9 @@ router.post('/post/cart', async (req, res) => {
     pool.query(`Select Add_To_Cart('${uid}', '${pid}', '${quantity}', '${note}')`, (error, results) => {
         if (error) {
             console.error(error);
-            res.status(500).json({result:'Error: '+error});
+            res.status(500).json({result:'failed',message:error});
         } else {
-            res.status(200).json({rows:results.rows[0].add_to_cart,result:'success'});
+            res.status(200).json({data:results.rows[0].add_to_cart,result:'success'});
         }
     });
 })
@@ -851,7 +836,7 @@ router.delete('/delete/cart/:id', (req, res) => {
     pool.query(`DELETE FROM cart WHERE id='${id}'`, (error, results) => {
         if (error) {
             console.error(error);
-            res.status(500).json({result:'Error: '+error});
+            res.status(500).json({result:'failed',message:error});
         } else {
             res.status(200).json({result:'success'});
         }
@@ -864,10 +849,10 @@ router.put('/put/cart', (req, res) => {
     pool.query(`UPDATE address_of_user SET quantity = '${item.quantity}' WHERE id='${item.id}'`, (error, results) => {
         if (error) {
             console.error(error);
-            res.status(500).send('Error',error);
+            res.status(500).json({result:'failed',message:error});
         } else {
 
-            return res.status(200).json({result:(results.rowCount==1)?'Success':'Failed'})
+            return res.status(200).json({result:(results.rowCount==1)?'success':'failed'})
         }
     });
 })
@@ -881,7 +866,7 @@ router.get('/get/voucher', (req, res) => {
             console.error(error);
             res.status(500).json({result:'failed'});
         } else {
-            res.status(200).json({rows:results.rows,result:'success'});
+            res.status(200).json({data:results.rows,result:'success'});
         }
     });
 })
@@ -892,7 +877,7 @@ router.get('/get/voucher/:code', (req, res) => {
             console.error(error);
             res.status(500).json({result:'failed'});
         } else {
-            res.status(200).json({rows:results.rows,result:'success'});
+            res.status(200).json({data:results.rows,result:'success'});
         }
     });
 })
@@ -906,7 +891,7 @@ LEFT JOIN PRODUCTS ON BILL.pid=PRODUCTS.id) AS PRODUCTS
 LEFT JOIN IMG_PRODUCT ON IMG_PRODUCT.p_name_id=PRODUCTS.name_id`, (error, results) => {
         if (error) {
             console.error(error);
-            res.status(500).send('Error',error);
+            res.status(500).json({result:'failed',message:error});
         } else {
             let bills = {}
             results.rows.forEach((row)=>{
@@ -949,7 +934,7 @@ LEFT JOIN IMG_PRODUCT ON IMG_PRODUCT.p_name_id=PRODUCTS.name_id`, (error, result
             Object.keys(bills).forEach((key)=>{
                 r.push(bills[key])
             })
-            res.status(200).json(r);
+            res.status(200).json({result:'success',data:r});
         }
     });
 })
