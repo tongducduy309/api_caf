@@ -252,7 +252,7 @@ router.get('/get/address-of-user/:uid', (req, res) => {
             const address = results.rows;
             
             
-            res.status(200).json({rows:address,result:'success'});
+            res.status(200).json({data:address,result:'success'});
         }
     });
 })
@@ -286,7 +286,7 @@ router.post('/post/address-of-user', (req, res) => {
             console.error(error);
             res.status(500).json({result:'failed',message:error});
         } else {
-            res.status(200).json({rows:results.rows[0].add_address,result:'success'});
+            res.status(200).json({data:results.rows[0].add_address,result:'success'});
         }
     });
 })
@@ -632,18 +632,6 @@ router.delete('/delete/products/:name_id/:img', async (req, res) => {
 
 
 })
-
-// router.get('/get/flash-sales/:ids', (req, res) => {
-//     const ids = req.params.ids
-//     pool.query(`SELECT * FROM FLASH_SALES WHERE pid in (${ids})`, (error, results) => {
-//         if (error) {
-//             console.error(error);
-//             res.status(500).json({result:'failed'});
-//         } else {
-//             res.status(200).json({rows:results.rows,result:'success'});
-//         }
-//     });
-// })
 
 router.post('/post/flash-sales', async (req, res) => {
     const form = req.body;
