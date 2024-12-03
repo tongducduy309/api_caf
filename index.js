@@ -914,6 +914,7 @@ LEFT JOIN IMG_PRODUCT ON IMG_PRODUCT.p_name_id=PRODUCTS.name_id`, (error, result
                         discount:row.discount,
                         paymentmethod:row.paymentmethod,
                         payment_status:row.payment_status,
+                        status:row.status,
                         products:[
                             {
                                 quantity:row.quantity,
