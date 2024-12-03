@@ -796,8 +796,8 @@ router.post('/post/checkout', async (req, res) => {
     }
     data = data.slice(0, -1);
     
-    pool.query(`INSERT INTO BILL (id,receiver,contactnumber,address,subtotal,delivery_fee,cost,discount,paymentmethod,payment_status) VALUES
-    ('${bid}','${user.receiver}', '${user.contactnumber}', '${user.address}', '${bill.subtotal}', '${bill.delivery_fee}', '${bill.cost}', '${bill.discount}', '${bill.paymentmethod}', '${bill.payment_status}') ; INSERT INTO DETAIL_BILL (bid,pid,quantity,price,sale,note) VALUES `+data, async (error, results) => {
+    pool.query(`INSERT INTO BILL (id,uid,receiver,contactnumber,address,subtotal,delivery_fee,cost,discount,paymentmethod,payment_status) VALUES
+    ('${bid}','${user.id}','${user.receiver}', '${user.contactnumber}', '${user.address}', '${bill.subtotal}', '${bill.delivery_fee}', '${bill.cost}', '${bill.discount}', '${bill.paymentmethod}', '${bill.payment_status}') ; INSERT INTO DETAIL_BILL (bid,pid,quantity,price,sale,note) VALUES `+data, async (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).json({result:'error',message:error});
@@ -897,7 +897,62 @@ router.get('/get/voucher/:code', (req, res) => {
     });
 })
 
-
+// ==========================BILL================================
+router.get('/get/bill/:uid', (req, res) => {
+    const uid = req.params.uid
+    pool.query(`SELECT PRODUCTS.*,img FROM (SELECT bill.*, PRODUCTS.name_id,PRODUCTS.name FROM (SELECT BILL.*,pid,quantity,price,sale,note FROM (SELECT * FROM BILL WHERE uid = '${uid}') as BILL
+LEFT JOIN DETAIL_BILL AS DB ON DB.bid = BILL.id) AS BILL
+LEFT JOIN PRODUCTS ON BILL.pid=PRODUCTS.id) AS PRODUCTS
+LEFT JOIN IMG_PRODUCT ON IMG_PRODUCT.p_name_id=PRODUCTS.name_id`, (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).send('Error',error);
+        } else {
+            let bills = {}
+            results.rows.forEach((row)=>{
+                if (row.id in bills){
+                    bills[row.id].products.push({
+                        quantity:row.quantity,
+                        sale:row.sale,
+                        note:row.note,
+                        name:row.name,
+                        img:row.img
+                    })
+                }
+                else{
+                    bills[row.id] = {
+                        id:row.id,
+                        uid:row.uid,
+                        receiver:row.receiver,
+                        contactnumber:row.contactnumber,
+                        address:row.address,
+                        created:row.created,
+                        subtotal:row.subtotal,
+                        delivery_fee:row.delivery_fee,
+                        cost:row.cost,
+                        discount:row.discount,
+                        paymentmethod:row.paymentmethod,
+                        payment_status:row.payment_status,
+                        products:[
+                            {
+                                quantity:row.quantity,
+                                sale:row.sale,
+                                note:row.note,
+                                name:row.name,
+                                img:row.img
+                            }
+                        ]
+                    }
+                }
+            })
+            let r = []
+            Object.keys(bills).forEach((key)=>{
+                r.push(bills[key])
+            })
+            res.status(200).json(r);
+        }
+    });
+})
 
 
 
