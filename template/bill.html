@@ -188,11 +188,11 @@
                             <p class="note"><b>Ghi chú: </b> {{this.note}}</p>
                         </div>
                         <div class="right">
-                            {{#if bill.sale}}
-                                <div class="cost"><span>{{product.cost_not_sale}}</span></div>
+                            {{#if this.sale}}
+                                <div class="cost"><span>{{this.cost_not_sale}}</span></div>
                             {{/if}}
                             
-                            <div class="price"><span>{{product.price}}</span> VND</div>
+                            <div class="price"><span>{{this.price}}</span> VND</div>
         
         
         
