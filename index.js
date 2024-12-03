@@ -898,7 +898,7 @@ router.get('/get/voucher/:code', (req, res) => {
 })
 
 // ==========================BILL================================
-router.get('/get/bill/:uid', (req, res) => {
+router.get('/get/bills/:uid', (req, res) => {
     const uid = req.params.uid
     pool.query(`SELECT PRODUCTS.*,img FROM (SELECT bill.*, PRODUCTS.name_id,PRODUCTS.name FROM (SELECT BILL.*,pid,quantity,price,sale,note FROM (SELECT * FROM BILL WHERE uid = '${uid}') as BILL
 LEFT JOIN DETAIL_BILL AS DB ON DB.bid = BILL.id) AS BILL
