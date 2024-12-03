@@ -128,7 +128,7 @@ async function sendEmail_Order(email_to,user,bill) {
     
     const source = fs.readFileSync(path.join(__dirname, 'template', 'bill.html'), 'utf-8').toString();
     const template = handlebars.compile(source);
-    for (let product of products){
+    for (let product of bill.products){
         if (product.sale>0){
             product['cost_not_sale']=formatPrice(product.cost)
             product['price']=formatPrice((product.sale>0)?(product.cost-product.cost*(product.sale/100)):product.cost)
