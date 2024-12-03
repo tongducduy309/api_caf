@@ -205,7 +205,7 @@ router.get('/get/users/:token', (req, res) => {
         } else {
             if (results.rowCount==0)
                 return res.status(200).json({result:'Not Exist'});
-            const user = results.rows[0]
+            let user = results.rows[0]
             if (user.verify==1){
                 user['result']='Success'
             }
