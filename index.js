@@ -232,7 +232,7 @@ router.get('/get/users/:email/:password', (req, res) => {
         } else {
             if (results.rowCount==0)
                 return res.status(200).json({result:'Not Exist'});
-            const user = results.rows[0]
+            let user = results.rows[0]
             const isMatch = await argon2.verify(user.password, password);
             if (!isMatch)
                 return res.status(200).json({result:'Wrong Password'});
