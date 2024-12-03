@@ -992,7 +992,7 @@ LEFT JOIN IMG_PRODUCT ON IMG_PRODUCT.p_name_id=PRODUCTS.name_id`, (error, result
             Object.keys(bills).forEach((key)=>{
                 r.push(bills[key])
             })
-            res.status(200).json({result:'success',data:(r[0].length>0)?r[0]:null});
+            res.status(200).json({result:'success',data:(r.length>0)?r[0]:null});
         }
     });
 })
