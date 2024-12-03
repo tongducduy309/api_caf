@@ -770,7 +770,7 @@ router.post('/post/checkout', async (req, res) => {
     data = data.slice(0, -1);
     
     pool.query(`INSERT INTO BILL (id,uid,receiver,contactnumber,address,subtotal,delivery_fee,cost,discount,paymentmethod,payment_status) VALUES
-    ('${bid}','${user.id}','${user.receiver}', '${user.contactnumber}', '${user.address}', '${bill.subtotal}', '${bill.delivery_fee}', '${bill.cost}', '${bill.discount}', '${bill.paymentmethod}', '${bill.payment_status}') ; INSERT INTO DETAIL_BILL (bid,pid,quantity,price,sale,note) VALUES `+data, async (error, results) => {
+    ('${bid}','${user.id}','${user.receiver}', '${user.contactnumber}', '${user.address}', '${bill.subtotal}', '${bill.delivery_fee}', '${bill.cost}', '${bill.discount}', '${bill.paymentmethod}', '${bill.payment_status}') ; INSERT INTO DETAIL_BILL (bid,pid,quantity,cost,sale,note) VALUES `+data, async (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).json({result:'error',message:error});
@@ -873,7 +873,7 @@ router.get('/get/voucher/:code', (req, res) => {
 // ==========================BILL================================
 router.get('/get/bills/:uid', (req, res) => {
     const uid = req.params.uid
-    pool.query(`SELECT PRODUCTS.*,img FROM (SELECT bill.*, PRODUCTS.name_id,PRODUCTS.name FROM (SELECT BILL.*,pid,quantity,price,sale,note FROM (SELECT * FROM BILL WHERE uid = '${uid}') as BILL
+    pool.query(`SELECT PRODUCTS.*,img FROM (SELECT bill.*, PRODUCTS.name_id,PRODUCTS.name FROM (SELECT BILL.*,pid,quantity,cost,sale,note FROM (SELECT * FROM BILL WHERE uid = '${uid}') as BILL
 LEFT JOIN DETAIL_BILL AS DB ON DB.bid = BILL.id) AS BILL
 LEFT JOIN PRODUCTS ON BILL.pid=PRODUCTS.id) AS PRODUCTS
 LEFT JOIN IMG_PRODUCT ON IMG_PRODUCT.p_name_id=PRODUCTS.name_id`, (error, results) => {
@@ -889,7 +889,8 @@ LEFT JOIN IMG_PRODUCT ON IMG_PRODUCT.p_name_id=PRODUCTS.name_id`, (error, result
                         sale:row.sale,
                         note:row.note,
                         name:row.name,
-                        img:row.img
+                        img:row.img,
+                        cost:row.cost
                     })
                 }
                 else{
@@ -912,7 +913,8 @@ LEFT JOIN IMG_PRODUCT ON IMG_PRODUCT.p_name_id=PRODUCTS.name_id`, (error, result
                                 sale:row.sale,
                                 note:row.note,
                                 name:row.name,
-                                img:row.img
+                                img:row.img,
+                                cost:row.cost
                             }
                         ]
                     }
