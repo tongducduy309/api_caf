@@ -358,7 +358,7 @@ router.put('/put/users/password', async (req, res) => {
             res.status(500).json({result:'failed',message:error});
         } else {
 
-            return res.status(200).json({result:(results.rowCount==1)?'success':'failed'})
+            return res.status(200).json({result:(results.rowCount==1)?'success':'failed',data:token_new})
         }
     });
 })
