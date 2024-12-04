@@ -898,7 +898,7 @@ router.get('/get/bills/:uid', (req, res) => {
     pool.query(`SELECT PRODUCTS.*,img FROM (SELECT bill.*, PRODUCTS.name_id,PRODUCTS.name FROM (SELECT BILL.*,pid,quantity,DB.cost as p_cost,sale,note FROM (SELECT * FROM BILL WHERE uid = '${uid}') as BILL
 LEFT JOIN DETAIL_BILL AS DB ON DB.bid = BILL.id) AS BILL
 LEFT JOIN PRODUCTS ON BILL.pid=PRODUCTS.id) AS PRODUCTS
-LEFT JOIN IMG_PRODUCT ON IMG_PRODUCT.p_name_id=PRODUCTS.name_id`, (error, results) => {
+LEFT JOIN IMG_PRODUCT ON IMG_PRODUCT.p_name_id=PRODUCTS.name_id ORDER BY PRODUCTS.created desc`, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).json({result:'failed',message:error});
