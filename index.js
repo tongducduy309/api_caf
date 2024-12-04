@@ -402,6 +402,9 @@ router.post('/post/register', async (req, res) => {
                 await sendEmail_register(email,fullname,token)
                 return res.status(200).json({result:'success'})
             }
+            if (results.rows[0].register=='Existed'){
+                return res.status(200).json({result:'existed'})
+            }
             else return res.status(500).json({result:'failed',message:error});
             
         }
