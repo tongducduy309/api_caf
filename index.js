@@ -465,22 +465,22 @@ router.get('/get/products/all', (req, res) => {
     });
 })
 
-router.get('/get/products-by-customer-reviews/:number', (req, res) => {
-    const number = req.params.number
-    query = `SELECT PRODUCTS.*,CS.point FROM (SELECT PRODUCTS.*, FS.SALE, FS.DATESALE_FROM,FS.DATESALE_TO FROM (SELECT products.*,CATEGORIES.name AS c_name,CATEGORIES.type AS c_type FROM (SELECT PRODUCTS.*,IMG_PRODUCT.img FROM PRODUCTS LEFT JOIN IMG_PRODUCT ON PRODUCTS.name_id=IMG_PRODUCT.p_name_id) AS PRODUCTS LEFT JOIN CATEGORIES ON PRODUCTS.cid=CATEGORIES.id) AS PRODUCTS LEFT JOIN (SELECT * FROM FLASH_SALES WHERE NOW()>= DATESALE_FROM AND NOW()<=DATESALE_TO) AS FS ON FS.pid=PRODUCTS.id) AS PRODUCTS LEFT JOIN (select name_id,AVG(point) AS point from CUSTOMER_REVIEWS GROUP BY name_id) AS CS ON CS.name_id=PRODUCTS.name_id 
-ORDER BY CS.point DESC`
-    pool.query(query, (error, results) => {
-        if (error) {
-            console.error(error);
-            res.status(500).json({result:'failed',message:error});
-        } else {
-            if (number=='all')
-                res.status(200).json({data:group(results.rows),result:'success'});
-            else
-            res.status(200).json({data:group(results.rows).slice(0,number),result:'success'});
-        }
-    });
-})
+// router.get('/get/products-by-customer-reviews/:number', (req, res) => {
+//     const number = req.params.number
+//     query = `SELECT PRODUCTS.*,CS.point FROM (SELECT PRODUCTS.*, FS.SALE, FS.DATESALE_FROM,FS.DATESALE_TO FROM (SELECT products.*,CATEGORIES.name AS c_name,CATEGORIES.type AS c_type FROM (SELECT PRODUCTS.*,IMG_PRODUCT.img FROM PRODUCTS LEFT JOIN IMG_PRODUCT ON PRODUCTS.name_id=IMG_PRODUCT.p_name_id) AS PRODUCTS LEFT JOIN CATEGORIES ON PRODUCTS.cid=CATEGORIES.id) AS PRODUCTS LEFT JOIN (SELECT * FROM FLASH_SALES WHERE NOW()>= DATESALE_FROM AND NOW()<=DATESALE_TO) AS FS ON FS.pid=PRODUCTS.id) AS PRODUCTS LEFT JOIN (select name_id,AVG(point) AS point from CUSTOMER_REVIEWS GROUP BY name_id) AS CS ON CS.name_id=PRODUCTS.name_id 
+// ORDER BY CS.point DESC`
+//     pool.query(query, (error, results) => {
+//         if (error) {
+//             console.error(error);
+//             res.status(500).json({result:'failed',message:error});
+//         } else {
+//             if (number=='all')
+//                 res.status(200).json({data:group(results.rows),result:'success'});
+//             else
+//             res.status(200).json({data:group(results.rows).slice(0,number),result:'success'});
+//         }
+//     });
+// })
 
 router.get('/get/products/:key', (req, res) => {
     let key_name = req.params.key
@@ -721,7 +721,7 @@ router.get('/get/best-customer-reviews/:number', (req, res) => {
     const number = req.params.number;
     
     pool.query(`SELECT DISTINCT p.id,p.*,IMG_PRODUCT.img FROM (select CS.*, products.name as p_name from (SELECT * FROM CUSTOMER_REVIEWS 
-ORDER BY point ASC
+ORDER BY point DESC
 LIMIT ${number}) as CS
 LEFT JOIN PRODUCTS ON PRODUCTS.name_id=CS.name_id) as p
 LEFT JOIN IMG_PRODUCT ON IMG_PRODUCT.p_name_id=p.name_id`, (error, results) => {
