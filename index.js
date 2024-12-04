@@ -707,7 +707,7 @@ router.post('/post/customer-reviews', (req, res) => {
 
 router.get('/get/customer-reviews/:id', (req, res) => {
     const id = req.params.id;
-    pool.query(`SELECT * FROM CUSTOMER_REVIEWS WHERE name_id = '${id}'`, (error, results) => {
+    pool.query(`SELECT * FROM CUSTOMER_REVIEWS WHERE name_id = '${id}' ORDER BY created desc`, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).json({result:'failed',message:error});
