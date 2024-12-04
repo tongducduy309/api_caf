@@ -876,7 +876,7 @@ router.delete('/delete/cart/:id', (req, res) => {
 router.put('/put/cart', (req, res) => {
     const item = req.body
 
-    pool.query(`UPDATE address_of_user SET quantity = '${item.quantity}' WHERE id='${item.id}'`, (error, results) => {
+    pool.query(`UPDATE CART SET quantity = '${item.quantity}' WHERE id='${item.id}'`, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).json({result:'failed',message:error});
