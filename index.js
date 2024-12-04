@@ -776,9 +776,13 @@ router.post('/post/checkout', async (req, res) => {
         data+=`('${bid}', '${s.pid}', '${s.quantity}', '${s.cost}', '${s.sale}' , '${s.note}'),`
     }
     data = data.slice(0, -1);
+
+    const point = parseInt(Math.floor(bill.cost/1000))
     
     pool.query(`INSERT INTO BILL (id,uid,receiver,contactnumber,address,subtotal,delivery_fee,cost,discount,paymentmethod,payment_status) VALUES
-    ('${bid}','${user.id}','${user.receiver}', '${user.contactnumber}', '${user.address}', '${bill.subtotal}', '${bill.delivery_fee}', '${bill.cost}', '${bill.discount}', '${bill.paymentmethod}', '${bill.payment_status}') ; INSERT INTO DETAIL_BILL (bid,pid,quantity,cost,sale,note) VALUES `+data, async (error, results) => {
+    ('${bid}','${user.id}','${user.receiver}', '${user.contactnumber}', '${user.address}', '${bill.subtotal}', '${bill.delivery_fee}', '${bill.cost}', '${bill.discount}', '${bill.paymentmethod}', '${bill.payment_status}') ; 
+    UPDATE USERS SET POINT = POINT + ${point} WHERE id = '${user.id}';
+    INSERT INTO DETAIL_BILL (bid,pid,quantity,cost,sale,note) VALUES `+data, async (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).json({result:'error',message:error});
