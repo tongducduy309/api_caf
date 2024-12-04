@@ -194,12 +194,29 @@ const pool = new pg.Pool({
 
 // const db =pool.connect();
 
+// ==========================USER================================
+router.get('/get/check-admin/:token', (req, res) => {
+    const token = req.params.token;
+    pool.query(`SELECT id FROM USERS WHERE token='${token}' And role = '1'`, (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).json({result:'failed',message:error});
+        } else {
+            if (results.rowCount==0)
+                return res.status(200).json({result:'failed'});
+            let user = results.rows[0]
+            user['result']='success'
+            res.status(200).json(user);
+        }
+    });
+})
+
 
 
 // ==========================USER================================
 router.get('/get/users/:token', (req, res) => {
     const token = req.params.token;
-    pool.query(`SELECT id,fullname,email,point,verify FROM USERS WHERE token='${token}'`, (error, results) => {
+    pool.query(`SELECT id,fullname,email,point,verify,role FROM USERS WHERE token='${token}'`, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).json({result:'failed',message:error});
@@ -226,7 +243,7 @@ router.get('/get/users/:email/:password', (req, res) => {
     if (!email || !password) {
         return res.status(400).json({ result: 'Missing required fields' });
     }
-    pool.query(`SELECT id,fullname,email,point,verify,token,password FROM USERS WHERE email='${email}'`, async (error, results) => {
+    pool.query(`SELECT id,fullname,email,point,verify,token,password,role FROM USERS WHERE email='${email}'`, async (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).json({result:'failed',message:error});
