@@ -769,17 +769,27 @@ router.post('/post/checkout', async (req, res) => {
     const form = req.body;
     const bill=form.bill
     const user=form.user
+    const inCart = form.inCart
+    let query = ''
+    let cart_ids = []
 
     let data = ''
     const bid = bill.id
     for (let s of bill.products){
         data+=`('${bid}', '${s.pid}', '${s.quantity}', '${s.cost}', '${s.sale}' , '${s.note}'),`
+        if (inCart){
+            cart_ids.push(s.id)
+        }
     }
     data = data.slice(0, -1);
+    if (inCart){
+        const ids = cart_ids.join(",")
+        query = `DELETE FROM CART WHERE id IN (${ids}) ; `
+    }
 
     const point = parseInt(Math.floor(bill.cost/1000))
     
-    pool.query(`INSERT INTO BILL (id,uid,receiver,contactnumber,address,subtotal,delivery_fee,cost,discount,paymentmethod,payment_status) VALUES
+    pool.query(query+`INSERT INTO BILL (id,uid,receiver,contactnumber,address,subtotal,delivery_fee,cost,discount,paymentmethod,payment_status) VALUES
     ('${bid}','${user.id}','${user.receiver}', '${user.contactnumber}', '${user.address}', '${bill.subtotal}', '${bill.delivery_fee}', '${bill.cost}', '${bill.discount}', '${bill.paymentmethod}', '${bill.payment_status}') ; 
     UPDATE USERS SET POINT = POINT + ${point} WHERE id = '${user.id}';
     INSERT INTO DETAIL_BILL (bid,pid,quantity,cost,sale,note) VALUES `+data, async (error, results) => {
