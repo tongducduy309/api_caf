@@ -144,7 +144,8 @@ async function sendEmail_Order(email_to,user,bill) {
         subtotal:formatPrice(bill.subtotal),
         delivery_fee:formatPrice(bill.delivery_fee),
         discount:bill.discount,
-        cost:formatPrice(bill.cost)
+        cost:formatPrice(bill.cost),
+        total:bill.total
         
     }
     }; 
@@ -808,8 +809,8 @@ router.post('/post/checkout', async (req, res) => {
 
     const point = parseInt(Math.floor(bill.cost/1000))
     
-    pool.query(query+`INSERT INTO BILL (id,uid,receiver,contactnumber,address,subtotal,delivery_fee,cost,discount,paymentmethod,payment_status) VALUES
-    ('${bid}','${user.id}','${user.receiver}', '${user.contactnumber}', '${user.address}', '${bill.subtotal}', '${bill.delivery_fee}', '${bill.cost}', '${bill.discount}', '${bill.paymentmethod}', '${bill.payment_status}') ; 
+    pool.query(query+`INSERT INTO BILL (id,uid,receiver,contactnumber,address,subtotal,delivery_fee,cost,discount,paymentmethod,payment_status,total) VALUES
+    ('${bid}','${user.id}','${user.receiver}', '${user.contactnumber}', '${user.address}', '${bill.subtotal}', '${bill.delivery_fee}', '${bill.cost}', '${bill.discount}', '${bill.paymentmethod}', '${bill.payment_status}','${bill.total}') ; 
     UPDATE USERS SET POINT = POINT + ${point} WHERE id = '${user.id}';
     INSERT INTO DETAIL_BILL (bid,pid,quantity,cost,sale,note) VALUES `+data, async (error, results) => {
         if (error) {
@@ -989,6 +990,7 @@ LEFT JOIN IMG_PRODUCT ON IMG_PRODUCT.p_name_id=PRODUCTS.name_id ORDER BY PRODUCT
                         paymentmethod:row.paymentmethod,
                         payment_status:row.payment_status,
                         status:row.status,
+                        total:row.total,
                         products:[
                             {
                                 quantity:row.quantity,
@@ -1054,6 +1056,7 @@ LEFT JOIN IMG_PRODUCT ON IMG_PRODUCT.p_name_id=PRODUCTS.name_id ORDER BY PRODUCT
                         paymentmethod:row.paymentmethod,
                         payment_status:row.payment_status,
                         status:row.status,
+                        total:row.total,
                         products:[
                             {
                                 quantity:row.quantity,
@@ -1114,6 +1117,7 @@ LEFT JOIN IMG_PRODUCT ON IMG_PRODUCT.p_name_id=PRODUCTS.name_id`, (error, result
                         paymentmethod:row.paymentmethod,
                         payment_status:row.payment_status,
                         status:row.status,
+                        total:row.total,
                         products:[
                             {
                                 quantity:row.quantity,
