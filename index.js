@@ -888,8 +888,7 @@ router.put('/put/cart', (req, res) => {
 
 
 // ==========================VOUCHER================================
-router.get('/get/voucher', (req, res) => {
-    const code = req.params.code
+router.get('/get/voucher/all', (req, res) => {
     pool.query(`SELECT * FROM voucher`, (error, results) => {
         if (error) {
             console.error(error);
