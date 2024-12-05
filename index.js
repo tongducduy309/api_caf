@@ -204,9 +204,8 @@ router.get('/get/check-admin/:token', (req, res) => {
         } else {
             if (results.rowCount==0)
                 return res.status(200).json({result:'failed'});
-            let user = results.rows[0]
-            user['result']='success'
-            res.status(200).json(user);
+            
+            res.status(200).json({result:'success',data:results.rows[0]});
         }
     });
 })
