@@ -922,8 +922,8 @@ router.post('/post/voucher', async (req, res) => {
     const code=form.code
     const discount=form.discount
     const quantity=form.quantity
-    const date_to=form.date_to
-    const date_from=form.date_from
+    const date_to=form.date[1]
+    const date_from=form.date[0]
 
     pool.query(`Select Add_Voucher('${code}', '${discount}', '${quantity}', '${date_from}', '${date_to}')`, (error, results) => {
         if (error) {
