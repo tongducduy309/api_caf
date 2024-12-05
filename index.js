@@ -890,7 +890,7 @@ router.put('/put/cart', (req, res) => {
 // ==========================VOUCHER================================
 router.get('/get/vouchers/all', (req, res) => {
     pool.query(`SELECT CASE 
-        WHEN NOW()>= DATE_FROM AND NOW()<=DATE_TO THEN true
+        WHEN NOW()>= DATE_FROM AND NOW()<=DATE_TO AND QUANTITY>0 THEN true
         ELSE false
     END AS date_status,* FROM voucher`, (error, results) => {
         if (error) {
