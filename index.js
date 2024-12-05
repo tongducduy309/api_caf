@@ -917,6 +917,23 @@ router.get('/get/voucher/:code', (req, res) => {
     });
 })
 
+router.post('/post/voucher', async (req, res) => {
+    const form = req.body;
+    const code=form.code
+    const discount=form.discount
+    const quantity=form.quantity
+    const date_to=form.date_to
+    const date_from=form.date_from
+
+    pool.query(`Select Add_Voucher('${code}', '${discount}', '${quantity}', '${date_from}', '${date_to}')`, (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).json({result:'failed',message:error});
+        } else {
+            res.status(200).json({data:results.rows[0].add_voucher,result:'success'});
+        }
+    });
+})
 // ==========================BILL================================
 router.get('/get/bills/:uid', (req, res) => {
     const uid = req.params.uid
