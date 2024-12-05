@@ -919,6 +919,19 @@ router.get('/get/voucher/:code', (req, res) => {
     });
 })
 
+router.delete('/delete/voucher/:id', (req, res) => {
+    const form = req.params;
+    const id=form.id
+    pool.query(`DELETE FROM voucher WHERE id='${id}'`, (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).json({result:'failed',message:error});
+        } else {
+            res.status(200).json({result:'success'});
+        }
+    });
+})
+
 router.post('/post/voucher', async (req, res) => {
     const form = req.body;
     const code=form.code
