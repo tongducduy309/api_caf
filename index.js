@@ -950,6 +950,73 @@ router.post('/post/voucher', async (req, res) => {
     });
 })
 // ==========================BILL================================
+
+router.get('/get/bills/all', (req, res) => {
+    const uid = req.params.uid
+    pool.query(`SELECT PRODUCTS.*,img FROM (SELECT bill.*, PRODUCTS.name_id,PRODUCTS.name FROM (SELECT BILL.*,pid,quantity,DB.cost as p_cost,sale,note FROM (SELECT * FROM BILL ) as BILL
+LEFT JOIN DETAIL_BILL AS DB ON DB.bid = BILL.id) AS BILL
+LEFT JOIN PRODUCTS ON BILL.pid=PRODUCTS.id) AS PRODUCTS
+LEFT JOIN IMG_PRODUCT ON IMG_PRODUCT.p_name_id=PRODUCTS.name_id ORDER BY PRODUCTS.created desc`, (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).json({result:'failed',message:error});
+        } else {
+            let bills = {}
+            results.rows.forEach((row)=>{
+                
+                if (row.id in bills){
+                    bills[row.id].products.push({
+                        quantity:row.quantity,
+                        sale:row.sale,
+                        note:row.note,
+                        name:row.name,
+                        img:row.img,
+                        cost:row.p_cost
+                    })
+                }
+                else{
+                    bills[row.id] = {
+                        id:row.id,
+                        uid:row.uid,
+                        receiver:row.receiver,
+                        contactnumber:row.contactnumber,
+                        address:row.address,
+                        created:row.created,
+                        subtotal:row.subtotal,
+                        delivery_fee:row.delivery_fee,
+                        cost:row.cost,
+                        discount:row.discount,
+                        paymentmethod:row.paymentmethod,
+                        payment_status:row.payment_status,
+                        status:row.status,
+                        products:[
+                            {
+                                quantity:row.quantity,
+                                sale:row.sale,
+                                note:row.note,
+                                name:row.name,
+                                img:row.img,
+                                cost:row.p_cost
+                            }
+                        ]
+                    }
+                }
+            })
+            let r = {}
+            Object.keys(bills).forEach((key)=>{
+                if (bills[key].status in r){
+                    r[bills[key].status].push(bills[key])
+                }else{
+                    r[bills[key].status]=[
+                        bills[key]
+                    ]
+                }
+            })
+            res.status(200).json({result:'success',data:r});
+        }
+    });
+})
+
 router.get('/get/bills/:uid', (req, res) => {
     const uid = req.params.uid
     pool.query(`SELECT PRODUCTS.*,img FROM (SELECT bill.*, PRODUCTS.name_id,PRODUCTS.name FROM (SELECT BILL.*,pid,quantity,DB.cost as p_cost,sale,note FROM (SELECT * FROM BILL WHERE uid = '${uid}') as BILL
