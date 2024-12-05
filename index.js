@@ -889,7 +889,10 @@ router.put('/put/cart', (req, res) => {
 
 // ==========================VOUCHER================================
 router.get('/get/vouchers/all', (req, res) => {
-    pool.query(`SELECT * FROM voucher`, (error, results) => {
+    pool.query(`SELECT CASE 
+        WHEN NOW()>= DATE_FROM AND NOW()<=DATE_TO THEN true
+        ELSE false
+    END AS date_status,* FROM voucher`, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).json({result:'failed'});
