@@ -197,7 +197,7 @@ const pool = new pg.Pool({
 // ==========================USER================================
 router.get('/get/check-admin/:token', (req, res) => {
     const token = req.params.token;
-    pool.query(`SELECT id FROM USERS WHERE token='${token}' And role = '1'`, (error, results) => {
+    pool.query(`SELECT id FROM USERS WHERE token='${token}' And role > 0`, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).json({result:'failed',message:error});
