@@ -906,6 +906,9 @@ router.get('/get/voucher/:code', (req, res) => {
             console.error(error);
             res.status(500).json({result:'failed'});
         } else {
+            if (results.rows.length==0){
+                return res.status(200).json({result:'not found'});
+            }
             if (results.rows[0].quantity==0){
                 return res.status(200).json({result:'limited'});
             }
