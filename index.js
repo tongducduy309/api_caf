@@ -1145,6 +1145,10 @@ router.put('/put/bill/status', (req, res) => {
     const id=form.id
     const status=form.status
 
+    if (status>4){
+        return res.status(400).json({result:'Status 0-4'})
+    }
+
     pool.query(`UPDATE BILL SET status = '${status}' WHERE id='${id}'`, (error, results) => {
         if (error) {
             console.error(error);
