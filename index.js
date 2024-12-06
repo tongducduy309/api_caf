@@ -990,7 +990,7 @@ LEFT JOIN IMG_PRODUCT ON IMG_PRODUCT.p_name_id=PRODUCTS.name_id ORDER BY PRODUCT
                         payment_status:row.payment_status,
                         status:row.status,
                         total:row.total,
-                        note:row.note,
+                        comment:row.comment,
                         products:[
                             {
                                 quantity:row.quantity,
@@ -1057,7 +1057,7 @@ LEFT JOIN IMG_PRODUCT ON IMG_PRODUCT.p_name_id=PRODUCTS.name_id ORDER BY PRODUCT
                         payment_status:row.payment_status,
                         status:row.status,
                         total:row.total,
-                        note:row.note,
+                        comment:row.comment,
                         products:[
                             {
                                 quantity:row.quantity,
@@ -1119,7 +1119,7 @@ LEFT JOIN IMG_PRODUCT ON IMG_PRODUCT.p_name_id=PRODUCTS.name_id`, (error, result
                         payment_status:row.payment_status,
                         status:row.status,
                         total:row.total,
-                        note:row.note,
+                        comment:row.comment,
                         products:[
                             {
                                 quantity:row.quantity,
