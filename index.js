@@ -198,14 +198,15 @@ const pool = new pg.Pool({
 // ==========================USER================================
 router.get('/get/check-admin/:token', (req, res) => {
     const token = req.params.token;
-    pool.query(`SELECT id,role FROM USERS WHERE token='${token}' And role > 0`, (error, results) => {
+    pool.query(`SELECT id,role,status FROM USERS WHERE token='${token}' And role > 0`, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).json({result:'failed',message:error});
         } else {
             if (results.rowCount==0)
                 return res.status(200).json({result:'failed'});
-            
+            if (!results.rows[0].status)
+                return res.status(200).json({result:'blocked'});
             res.status(200).json({result:'success',data:results.rows[0]});
         }
     });
@@ -216,7 +217,7 @@ router.get('/get/check-admin/:token', (req, res) => {
 // ==========================USER================================
 router.get('/get/users/:token', (req, res) => {
     const token = req.params.token;
-    pool.query(`SELECT id,fullname,email,point,verify,role FROM USERS WHERE token='${token}'`, (error, results) => {
+    pool.query(`SELECT id,fullname,email,point,verify,role,status FROM USERS WHERE token='${token}'`, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).json({result:'failed',message:error});
@@ -224,8 +225,10 @@ router.get('/get/users/:token', (req, res) => {
             if (results.rowCount==0)
                 return res.status(200).json({result:'Not Exist'});
             let user = results.rows[0]
-            if (user.verify==1){
+            if (user.verify){
                 user['result']='Success'
+                if (!user.status)
+                    return res.status(200).json({result:'blocked'});
             }
             else{
                 user = {result:'Not Verify'}
@@ -243,7 +246,7 @@ router.get('/get/users/:email/:password', (req, res) => {
     if (!email || !password) {
         return res.status(400).json({ result: 'Missing required fields' });
     }
-    pool.query(`SELECT id,fullname,email,point,verify,token,password,role FROM USERS WHERE email='${email}'`, async (error, results) => {
+    pool.query(`SELECT id,fullname,email,point,verify,token,password,role,status FROM USERS WHERE email='${email}'`, async (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).json({result:'failed',message:error});
@@ -254,14 +257,28 @@ router.get('/get/users/:email/:password', (req, res) => {
             const isMatch = await argon2.verify(user.password, password);
             if (!isMatch)
                 return res.status(200).json({result:'Wrong Password'});
-            if (user.verify==1){
+            if (user.verify){
                 user['result']='Success'
+                if (!user.status)
+                    return res.status(200).json({result:'blocked'});
             }
             else{
                 user = {result:'Not Verify'}
             }
             delete user['password']
             res.status(200).json(user);
+        }
+    });
+})
+
+router.get('/get/accounts/:role', (req, res) => {
+    const role = req.params.role;
+    pool.query(`SELECT id,fullname,email,point,verify,status FROM USERS WHERE role=${role}`, async (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).json({result:'failed',message:error});
+        } else {
+            res.status(200).json({result:'success',data:results.rows});
         }
     });
 })
