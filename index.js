@@ -1140,7 +1140,21 @@ LEFT JOIN IMG_PRODUCT ON IMG_PRODUCT.p_name_id=PRODUCTS.name_id`, (error, result
     });
 })
 
+router.put('/put/bill/status', (req, res) => {
+    const form = req.body
+    const id=form.id
+    const status=form.status
 
+    pool.query(`UPDATE BILL SET status = '${status}' WHERE id='${id}'`, (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).json({result:'failed',message:error});
+        } else {
+
+            return res.status(200).json({result:(results.rowCount==1)?'success':'failed'})
+        }
+    });
+})
 
 
 app.get('/', (req, res) => {
