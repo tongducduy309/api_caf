@@ -953,7 +953,6 @@ router.post('/post/voucher', async (req, res) => {
 // ==========================BILL================================
 
 router.get('/get/bills/all', (req, res) => {
-    const uid = req.params.uid
     pool.query(`SELECT PRODUCTS.*,img FROM (SELECT bill.*, PRODUCTS.name_id,PRODUCTS.name FROM (SELECT BILL.*,pid,quantity,DB.cost as p_cost,sale,note FROM (SELECT * FROM BILL ) as BILL
 LEFT JOIN DETAIL_BILL AS DB ON DB.bid = BILL.id) AS BILL
 LEFT JOIN PRODUCTS ON BILL.pid=PRODUCTS.id) AS PRODUCTS
@@ -991,6 +990,7 @@ LEFT JOIN IMG_PRODUCT ON IMG_PRODUCT.p_name_id=PRODUCTS.name_id ORDER BY PRODUCT
                         payment_status:row.payment_status,
                         status:row.status,
                         total:row.total,
+                        note:row.note,
                         products:[
                             {
                                 quantity:row.quantity,
@@ -1057,6 +1057,7 @@ LEFT JOIN IMG_PRODUCT ON IMG_PRODUCT.p_name_id=PRODUCTS.name_id ORDER BY PRODUCT
                         payment_status:row.payment_status,
                         status:row.status,
                         total:row.total,
+                        note:row.note,
                         products:[
                             {
                                 quantity:row.quantity,
@@ -1118,6 +1119,7 @@ LEFT JOIN IMG_PRODUCT ON IMG_PRODUCT.p_name_id=PRODUCTS.name_id`, (error, result
                         payment_status:row.payment_status,
                         status:row.status,
                         total:row.total,
+                        note:row.note,
                         products:[
                             {
                                 quantity:row.quantity,
