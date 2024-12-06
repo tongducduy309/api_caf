@@ -124,6 +124,27 @@ async function sendEmail_register(email_to,name_to,token) {
     console.log("Message sent: %s", info.messageId)
 }
 
+async function sendEmail_register_staff(email_to,name_to,token) {
+    
+    const source = fs.readFileSync(path.join(__dirname, 'template', 'verify_staff.html'), 'utf-8').toString();
+    const template = handlebars.compile(source);
+    const replacements = {
+    fullname: name_to,
+    token:token,
+    email:email_to
+    }; 
+    const htmlToSend = template (replacements)
+    const info = await transporter.sendMail({
+        from: '"COFFEE STORE" <kdk2003.sgu@gmail.com>', 
+        to: email_to,
+        subject: "Thư ngõ vào nhà chung", 
+        text: "Thư ngõ vào nhà chung", 
+        html:htmlToSend,
+    });
+
+    console.log("Message sent: %s", info.messageId)
+}
+
 async function sendEmail_Order(email_to,user,bill) {
     
     const source = fs.readFileSync(path.join(__dirname, 'template', 'bill.html'), 'utf-8').toString();
@@ -402,7 +423,7 @@ router.put('/put/users/password', async (req, res) => {
             email: email,
             password: password 
         });
-    pool.query(`UPDATE USERS SET password = '${password}', token = '${token_new}' WHERE token='${token}'`, (error, results) => {
+    pool.query(`UPDATE USERS SET password = '${password}', token = '${token_new}', verify=true WHERE token='${token}'`, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).json({result:'failed',message:error});
@@ -426,14 +447,23 @@ router.post('/post/register', async (req, res) => {
             password: password 
         });
         
-    pool.query(`SELECT REGISTER ('${fullname}', '${email}', '${password}', '${token}')`, async (error, results) => {
+    pool.query(`SELECT REGISTER ('${fullname}', '${email}', '${password}', '${token}', '${role}')`, async (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).json({result:'failed',message:error});
         } else {
             if (results.rows[0].register=='Success'){
-                await sendEmail_register(email,fullname,token)
-                return res.status(200).json({result:'success'})
+                if (role==0)
+                {
+                    await sendEmail_register(email,fullname,token)
+                    return res.status(200).json({result:'success'})
+                }
+
+                else{
+                    await sendEmail_register_staff(email,fullname,token)
+                    return res.status(200).json({result:'success'})
+                }
+                
             }
             if (results.rows[0].register=='Existed'){
                 return res.status(200).json({result:'existed'})
@@ -446,6 +476,39 @@ router.post('/post/register', async (req, res) => {
     
     
 })
+
+// router.post('/post/account/staff', async (req, res) => {
+//     const user = req.body;
+//     const fullname=user.fullname
+//     const email = user.email
+//     const password=await argon2.hash('12345678');
+
+//     const token = generateToken(
+//         { 
+//             email: email,
+//             password: password 
+//         });
+        
+//     pool.query(`SELECT REGISTER_Staff ('${fullname}', '${email}', '${password}', '${token}')`, async (error, results) => {
+//         if (error) {
+//             console.error(error);
+//             res.status(500).json({result:'failed',message:error});
+//         } else {
+//             if (results.rows[0].register_staff=='Success'){
+//                 await sendEmail_register_staff(email,fullname,token)
+//                 return res.status(200).json({result:'success'})
+//             }
+//             if (results.rows[0].register_staff=='Existed'){
+//                 return res.status(200).json({result:'existed'})
+//             }
+//             else return res.status(500).json({result:'failed',message:error});
+            
+//         }
+//     });
+
+    
+    
+// })
 
 router.put('/put/users/verify', (req, res) => {
     const token = req.body.token

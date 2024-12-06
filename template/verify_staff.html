@@ -3,13 +3,11 @@
 <html>
     <head>
         <style>
-            
-
             .container{
                 border: 1px solid #eaeaea;
                 padding: 30px;
                 border-radius: 5px;
-                width: 600px;
+                width: 500px;
                 margin: 0 auto;
                 
             }
@@ -17,7 +15,6 @@
                 width: 100%;
                 position: relative;
                 text-align: center;
-                display: block;
             }
             .subtitle{
                 color: #000;
@@ -43,27 +40,24 @@
                 cursor: pointer;
                 
             }
-
-            
     
         </style>
     </head>
 <body>
     
     <div style="font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
-        
         <div class="container">
             <div class="group">
-                <p class="subtitle"><b>Coffe Store</b></p>
+                <p class="subtitle">Xác nhận vào nhà chung <b>Coffe Store</b></p>
             </div>
             <p>Chào <b>{{fullname}}</b>,</p>
-            <p>Để đặt lại mật khẩu, bạn vui lòng nhấn vào nút <b>"ĐẶT LẠI MẬT KHẨU"</b>.</p>
+            <p>Để xác nhận email đăng ký, bạn vui lòng nhấn vào nút <b>"XÁC THỰC"</b>.</p>
             <div class="group">
                 <!--  -->
                 <!-- <a href="http://localhost:4200/account/verify?token={{token}}" id="btnForm" class="btn">XÁC THỰC</a> -->
-                <a href="https://caf-bay.vercel.app/account/new-password?token={{token}}&email={{email}}" id="btnForm" class="btn">ĐẶT LẠI MẬT KHẨU</a>
+                <a href="https://caf-bay.vercel.app/account/new-password?token={{token}}&email={{email}}" id="btnForm" class="btn">XÁC THỰC</a>
             </div>
-            <p>Nếu đây không phải yêu cầu đặt lại mật khẩu của bạn, bạn có thể bỏ qua email này. Có thể một ai đó đã gõ nhầm địa chỉ email của bạn.</p>
+            <p>Nếu đây không phải yêu cầu xác thực của bạn, bạn có thể bỏ qua email này. Có thể một ai đó đã gõ nhầm địa chỉ email của bạn.</p>
 
             <p>Chúng tôi xin chân thành cảm ơn.</p>
 
