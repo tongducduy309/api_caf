@@ -477,39 +477,6 @@ router.post('/post/register', async (req, res) => {
     
 })
 
-// router.post('/post/account/staff', async (req, res) => {
-//     const user = req.body;
-//     const fullname=user.fullname
-//     const email = user.email
-//     const password=await argon2.hash('12345678');
-
-//     const token = generateToken(
-//         { 
-//             email: email,
-//             password: password 
-//         });
-        
-//     pool.query(`SELECT REGISTER_Staff ('${fullname}', '${email}', '${password}', '${token}')`, async (error, results) => {
-//         if (error) {
-//             console.error(error);
-//             res.status(500).json({result:'failed',message:error});
-//         } else {
-//             if (results.rows[0].register_staff=='Success'){
-//                 await sendEmail_register_staff(email,fullname,token)
-//                 return res.status(200).json({result:'success'})
-//             }
-//             if (results.rows[0].register_staff=='Existed'){
-//                 return res.status(200).json({result:'existed'})
-//             }
-//             else return res.status(500).json({result:'failed',message:error});
-            
-//         }
-//     });
-
-    
-    
-// })
-
 router.put('/put/users/verify', (req, res) => {
     const token = req.body.token
     console.log(token);
