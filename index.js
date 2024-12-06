@@ -434,7 +434,7 @@ router.post('/post/register', async (req, res) => {
 router.put('/put/users/verify', (req, res) => {
     const token = req.body.token
     console.log(token);
-    pool.query(`UPDATE USERS SET verify=1 WHERE token='${token}' AND verify=0`, (error, results) => {
+    pool.query(`UPDATE USERS SET verify=true WHERE token='${token}' AND verify=false`, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).json({result:'failed',message:error});
