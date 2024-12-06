@@ -217,7 +217,7 @@ router.get('/get/check-admin/:token', (req, res) => {
 // ==========================USER================================
 router.get('/get/users/:token', (req, res) => {
     const token = req.params.token;
-    pool.query(`SELECT id,fullname,email,point,verify,role,status FROM USERS WHERE token='${token}'`, (error, results) => {
+    pool.query(`SELECT id,fullname,email,point,verify,role,status,created FROM USERS WHERE token='${token}'`, (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).json({result:'failed',message:error});
@@ -246,7 +246,7 @@ router.get('/get/users/:email/:password', (req, res) => {
     if (!email || !password) {
         return res.status(400).json({ result: 'Missing required fields' });
     }
-    pool.query(`SELECT id,fullname,email,point,verify,token,password,role,status FROM USERS WHERE email='${email}'`, async (error, results) => {
+    pool.query(`SELECT id,fullname,email,point,verify,token,password,role,status,created FROM USERS WHERE email='${email}'`, async (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).json({result:'failed',message:error});
@@ -273,7 +273,7 @@ router.get('/get/users/:email/:password', (req, res) => {
 
 router.get('/get/accounts/:role', (req, res) => {
     const role = req.params.role;
-    pool.query(`SELECT id,fullname,email,point,verify,status FROM USERS WHERE role=${role}`, async (error, results) => {
+    pool.query(`SELECT id,fullname,email,point,verify,status,created FROM USERS WHERE role=${role}`, async (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).json({result:'failed',message:error});
