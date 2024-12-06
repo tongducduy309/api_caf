@@ -273,12 +273,28 @@ router.get('/get/users/:email/:password', (req, res) => {
 
 router.get('/get/accounts/:role', (req, res) => {
     const role = req.params.role;
-    pool.query(`SELECT id,fullname,email,point,verify,status,created FROM USERS WHERE role=${role}`, async (error, results) => {
+    pool.query(`SELECT id,fullname,email,point,verify,status,created FROM USERS WHERE role=${role} ORDER BY created DESC`, async (error, results) => {
         if (error) {
             console.error(error);
             res.status(500).json({result:'failed',message:error});
         } else {
             res.status(200).json({result:'success',data:results.rows});
+        }
+    });
+})
+
+router.put('/put/account/status', (req, res) => {
+    const form = req.body
+    const id=form.id
+    const status=form.status
+
+    pool.query(`UPDATE USERS SET status = ${status} WHERE id='${id}'`, (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).json({result:'failed',message:error});
+        } else {
+
+            return res.status(200).json({result:(results.rowCount==1)?'success':'failed'})
         }
     });
 })
