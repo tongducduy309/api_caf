@@ -1162,6 +1162,25 @@ router.put('/put/bill/status', (req, res) => {
     });
 })
 
+router.put('/put/bill/status/cancel', (req, res) => {
+    const form = req.body
+    const id=form.id
+    const comment=form.comment
+    if (comment.trim().length==0){
+        return res.status(400).json({result:'Comment is empty'})
+    }
+
+    pool.query(`UPDATE BILL SET status = '4', comment = '${comment}' WHERE id='${id}'`, (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(500).json({result:'failed',message:error});
+        } else {
+
+            return res.status(200).json({result:(results.rowCount==1)?'success':'failed'})
+        }
+    });
+})
+
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
