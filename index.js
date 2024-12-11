@@ -1251,7 +1251,7 @@ app.get('/', (req, res) => {
 })
 
 app.use(cors({
-    origin: ['http://localhost:4200' ,'https://caf-bay.vercel.app', 'http://localhost:3000']
+    origin: ['http://localhost:4200' ,'http://localhost:9876' ,'https://caf-bay.vercel.app', 'http://localhost:3000']
    ,methods: 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
   allowedHeaders: ['Content-Type']
   }));
