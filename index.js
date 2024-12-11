@@ -249,7 +249,7 @@ router.get('/get/users/:token', (req, res) => {
             if (user.verify){
                 user['result']='Success'
                 if (!user.status)
-                    return res.status(200).json({result:'blocked'});
+                    return res.status(200).json({result:'Blocked'});
             }
             else{
                 user = {result:'Not Verify'}
@@ -281,7 +281,7 @@ router.get('/get/users/:email/:password', (req, res) => {
             if (user.verify){
                 user['result']='Success'
                 if (!user.status)
-                    return res.status(200).json({result:'blocked'});
+                    return res.status(200).json({result:'Blocked'});
             }
             else{
                 user = {result:'Not Verify'}
