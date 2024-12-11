@@ -550,7 +550,7 @@ router.get('/get/products/:key', (req, res) => {
     let key_name = req.params.key
     let key = removeVietnameseTones(req.params.key);
     if (key!='all'){
-        pool.query(`SELECT P.*,IMG_PRODUCT.img FROM (SELECT * FROM PRODUCTS WHERE LOWER(name) LIKE '%${key_name}%' OR LOWER(name_id) LIKE '%${key}%') as P LEFT JOIN IMG_PRODUCT ON P.name_id=IMG_PRODUCT.p_name_id
+        pool.query(`SELECT P.*,IMG_PRODUCT.img FROM (SELECT * FROM PRODUCTS WHERE LOWER(name) LIKE '%${key_name}%' OR LOWER(name_id) LIKE '%${key}%') as P LEFT JOIN IMG_PRODUCT ON P.name_id=IMG_PRODUCT.p_name_id WHERE P.shelf_status=true
             `, (error, results) => {
             if (error) {
                 console.error(error);
